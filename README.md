@@ -33,12 +33,16 @@ Produces `~/release-reports/release-report.html` and `release-report.json`.
 Open the HTML in a browser — the "Potentially Missing" section at the top
 is the one to look at first.
 
-If you don't want it to fetch from `origin` first (offline, or already
-up to date locally):
+By default the tool **does not** run `git fetch` — it compares whatever's
+already in your local clone. This is deliberate: `git fetch` can trigger a
+credential prompt (e.g. Git Credential Manager popping up a window on
+Windows) if your remote needs re-authentication, and a read-only analysis
+tool shouldn't surprise you with that. If you want it to refresh from
+`origin` first, opt in explicitly:
 
 ```bash
 python /path/to/release-report/release_report.py \
-    --source release/26.05 --target release/26.06 --no-fetch
+    --source release/26.05 --target release/26.06 --fetch
 ```
 
 ### Example output
@@ -58,7 +62,7 @@ Regenerate it any time with:
 ```bash
 python example/build_demo_repo.py
 python release_report.py --repo example/demo-repo --source release/26.05 \
-    --target release/26.06 --no-fetch --out-dir example \
+    --target release/26.06 --out-dir example \
     --html-name example-report.html --json-name example-report.json
 ```
 
@@ -73,7 +77,8 @@ python release_report.py --source REF --target REF [options]
 --target REF        Target (new) release branch, e.g. release/26.06      [required]
 --repo PATH          Path to the Git repository                (default: .)
 --remote NAME         Git remote to fetch from                  (default: origin)
---no-fetch            Skip `git fetch`; use local refs as-is
+--fetch                Run 'git fetch' before comparing (default: off -- avoids
+                          surprise credential prompts; opt in explicitly)
 --out-dir PATH        Output directory                          (default: .)
 --html-name NAME       Output HTML filename                     (default: release-report.html)
 --json-name NAME       Output JSON filename                     (default: release-report.json)

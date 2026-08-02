@@ -98,12 +98,19 @@ def analyze(
     repo_dir: str,
     source_branch: str,
     target_branch: str,
-    fetch: bool = True,
+    fetch: bool = False,
     remote: str = "origin",
 ) -> ReleaseComparison:
     git_ops.ensure_repo(repo_dir)
     if fetch:
+        logger.info("Fetching from remote '%s' (may prompt for credentials)...", remote)
         git_ops.fetch_all(repo_dir, remote=remote)
+    else:
+        logger.info(
+            "Skipping git fetch (default) -- comparing local refs as-is. "
+            "Pass fetch=True / --fetch if you want to refresh from '%s' first.",
+            remote,
+        )
 
     source_sha = git_ops.resolve_ref(repo_dir, source_branch)
     target_sha = git_ops.resolve_ref(repo_dir, target_branch)

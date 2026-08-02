@@ -31,7 +31,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--target", required=True, help="Target (new) release branch, e.g. release/26.06")
     p.add_argument("--repo", default=".", help="Path to the Git repository (default: current directory)")
     p.add_argument("--remote", default="origin", help="Git remote to fetch from (default: origin)")
-    p.add_argument("--no-fetch", action="store_true", help="Skip 'git fetch' and use local refs as-is")
+    p.add_argument(
+        "--fetch", action="store_true",
+        help="Run 'git fetch' before comparing (default: off). Off by default because "
+             "fetch can trigger a credential prompt/popup (e.g. Git Credential Manager "
+             "on Windows) if your remote needs re-authentication -- opt in explicitly "
+             "if you want branches refreshed from origin first.",
+    )
     p.add_argument(
         "--github-api-url", default=None,
         help="Optional: GitHub Enterprise API base URL (e.g. https://ghe.example.com/api/v3) "
@@ -65,7 +71,7 @@ def main(argv: list[str] | None = None) -> int:
             repo_dir=args.repo,
             source_branch=args.source,
             target_branch=args.target,
-            fetch=not args.no_fetch,
+            fetch=args.fetch,
             remote=args.remote,
         )
 
