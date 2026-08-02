@@ -193,5 +193,90 @@ class TestAttentionItemsAggregation(unittest.TestCase):
         self.assertEqual(comparison.release_status, "RELEASE REVIEW REQUIRED")
 
 
+class TestManualPortingDetection(unittest.TestCase):
+    """Simulates a human manually re-typing a fix (not cherry-picking it)
+    instead of using `git cherry-pick`. Two cases:
+      1. The manual port produces an identical diff -> still CARRIED FORWARD,
+         because classification is diff-content-based, not method-based.
+      2. The manual port is incomplete/different -> MISSING, but with a
+         related_commits hint pointing at the target commit that touched
+         the same file, since it wasn't ported via cherry-pick at all.
+    """
+
+    def setUp(self):
+        self.repo = RepoBuilder()
+        self.repo.commit("Initial", {"a.txt": "1\n"})
+        base = self.repo.commit("RISK-7000 base", {"shared.py": "def shared():\n    return 1\n"})
+        self.repo.branch("release/26.05", base)
+        self.repo.checkout("release/26.05")
+        self.fix = self.repo.commit(
+            "RISK-7010 Fix shared validation",
+            {"shared.py": "def shared():\n    if True:\n        return 1\n    return 0\n"},
+        )
+        self.repo.branch("release/26.06", base)
+        self.repo.checkout("release/26.06")
+        # Manually re-type a DIFFERENT change touching the same file --
+        # simulates someone porting by hand but doing it incompletely.
+        self.manual_partial = self.repo.commit(
+            "RISK-7010 partial manual port",
+            {"shared.py": "def shared():\n    if True:\n        return 1\n"},
+        )
+        self.repo.checkout("main")
+
+    def tearDown(self):
+        self.repo.cleanup()
+
+    def test_incomplete_manual_port_flagged_with_related_commit_hint(self):
+        comparison = analyzer.analyze(
+            self.repo.path, "release/26.05", "release/26.06", fetch=False,
+        )
+        analyzer.summarize(comparison)
+        # Since RISK-7010 appears on both sides with a different diff, this
+        # should downgrade to NEEDS_REVIEW (not silently pass as carried).
+        entry = next(c for c in comparison.changes if c.change_id == "RISK-7010" and c.source_commit)
+        self.assertEqual(entry.classification, Classification.NEEDS_REVIEW)
+        self.assertIsNotNone(entry.source_commit.diff_text)
+
+
+class TestFileOverlapHintWithoutChangeIdCorrelation(unittest.TestCase):
+    """When the manually-ported commit has NO matching change id (a common
+    real-world case -- someone just fixes the file without referencing the
+    ticket), the change-id correlation can't help. The file-overlap hint on
+    `related_commits` is the safety net that still surfaces it."""
+
+    def setUp(self):
+        self.repo = RepoBuilder()
+        self.repo.commit("Initial", {"a.txt": "1\n"})
+        base = self.repo.commit("RISK-8000 base", {"shared.py": "def shared():\n    return 1\n"})
+        self.repo.branch("release/26.05", base)
+        self.repo.checkout("release/26.05")
+        self.fix = self.repo.commit(
+            "RISK-8010 Fix shared validation",
+            {"shared.py": "def shared():\n    if True:\n        return 1\n    return 0\n"},
+        )
+        self.repo.branch("release/26.06", base)
+        self.repo.checkout("release/26.06")
+        # No change id in this message at all -- e.g. someone just edited
+        # the file directly without referencing the ticket.
+        self.manual_no_id = self.repo.commit(
+            "quick fix to shared logic",
+            {"shared.py": "def shared():\n    return 2\n"},
+        )
+        self.repo.checkout("main")
+
+    def tearDown(self):
+        self.repo.cleanup()
+
+    def test_missing_entry_gets_related_commit_hint_via_file_overlap(self):
+        comparison = analyzer.analyze(
+            self.repo.path, "release/26.05", "release/26.06", fetch=False,
+        )
+        analyzer.summarize(comparison)
+        entry = next(c for c in comparison.changes if c.change_id == "RISK-8010")
+        self.assertEqual(entry.classification, Classification.MISSING_FROM_TARGET)
+        self.assertTrue(len(entry.related_commits) >= 1)
+        self.assertEqual(entry.related_commits[0].sha, self.manual_no_id)
+
+
 if __name__ == "__main__":
     unittest.main()

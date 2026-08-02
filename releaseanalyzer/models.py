@@ -44,6 +44,7 @@ class Commit:
     pr_url: Optional[str] = None
     pr_state: Optional[str] = None       # open / closed / merged
     patch_id: Optional[str] = None
+    diff_text: Optional[str] = None      # truncated unified diff, for inline review
     is_merge: bool = False
     files_changed: list[str] = field(default_factory=list)
     insertions: int = 0
@@ -69,7 +70,7 @@ class ChangeEntry:
     classification_reason: str
     source_commit: Optional[Commit] = None
     target_commit: Optional[Commit] = None
-    related_commits: list[Commit] = field(default_factory=list)
+    related_commits: list[Commit] = field(default_factory=list)  # for MISSING/NEEDS_REVIEW: target commits sharing changed files, as a manual-check hint (not a classification signal)
     merge_commit: bool = False
 
     def to_dict(self) -> dict:

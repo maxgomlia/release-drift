@@ -257,6 +257,8 @@ def analyze(
             "target release.",
         ))
 
+    _enrich_attention_entries(repo_dir, changes, target_commits)
+
     changes.sort(key=_sort_key)
 
     metadata = RunMetadata(
@@ -307,6 +309,47 @@ def _build_entry(
         related_commits=[],
         merge_commit=anchor.is_merge,
     )
+
+
+def _enrich_attention_entries(
+    repo_dir: str,
+    changes: list[ChangeEntry],
+    target_commits: list[Commit],
+) -> None:
+    """For MISSING/NEEDS_REVIEW entries only (kept selective for performance
+    on large repos), populate:
+
+    1. A truncated diff preview on the relevant commit(s), so a reviewer can
+       eyeball whether this is a real gap without leaving the report.
+    2. `related_commits`: target-only commits that touched at least one of
+       the same files, purely as a "you might want to check this manually"
+       hint -- NOT a classification signal. This is the safety net for
+       changes that were manually re-ported (not cherry-picked) with a
+       diff that doesn't patch-id-match: if someone touched the same file
+       in target but the content genuinely differs, this surfaces it for a
+       human to judge rather than requiring a separate search.
+    """
+    for entry in changes:
+        if entry.classification not in (Classification.MISSING_FROM_TARGET, Classification.NEEDS_REVIEW):
+            continue
+
+        for commit in (entry.source_commit, entry.target_commit):
+            if commit and commit.diff_text is None:
+                commit.diff_text = git_ops.diff_preview(repo_dir, commit.sha)
+
+        if entry.classification == Classification.MISSING_FROM_TARGET and entry.source_commit:
+            source_files = set(entry.source_commit.files_changed)
+            if not source_files:
+                continue
+            candidates = []
+            for tc in target_commits:
+                if tc.sha == (entry.target_commit.sha if entry.target_commit else None):
+                    continue
+                overlap = source_files & set(tc.files_changed)
+                if overlap:
+                    candidates.append((len(overlap), tc))
+            candidates.sort(key=lambda pair: pair[0], reverse=True)
+            entry.related_commits = [c for _, c in candidates[:3]]
 
 
 def _sort_key(entry: ChangeEntry):

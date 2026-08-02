@@ -43,11 +43,11 @@ def render(comparison: ReleaseComparison) -> str:
 
     rows_html = "\n".join(_render_row(c, i) for i, c in enumerate(comparison.changes))
     missing_html = (
-        "".join(_render_missing_card(c) for c in missing)
+        "".join(_render_missing_card(c, metadata=m) for c in missing)
         if missing else '<p class="empty-state">No changes present on the source release appear to be missing from the target release.</p>'
     )
     review_html = (
-        "".join(_render_missing_card(c, tone="warn") for c in needs_review)
+        "".join(_render_missing_card(c, tone="warn", metadata=m) for c in needs_review)
         if needs_review else '<p class="empty-state">No changes require manual classification review.</p>'
     )
     branch_svg = _render_branch_svg(comparison)
@@ -232,7 +232,53 @@ def _render_row(c: ChangeEntry, idx: int) -> str:
     </tr>"""
 
 
-def _render_missing_card(c: ChangeEntry, tone: str = "danger") -> str:
+def _files_list(commit) -> str:
+    if not commit or not commit.files_changed:
+        return "—"
+    shown = commit.files_changed[:12]
+    items = "".join(f"<li>{_e(f)}</li>" for f in shown)
+    more = f"<li class='more'>+{len(commit.files_changed) - 12} more</li>" if len(commit.files_changed) > 12 else ""
+    return f'<ul class="risk-files">{items}{more}</ul>'
+
+
+def _diff_snippet(commit) -> str:
+    if not commit or not commit.diff_text:
+        return ""
+    return f'<details class="risk-diff"><summary>Show diff ({commit.short_sha})</summary><pre>{_e(commit.diff_text)}</pre></details>'
+
+
+def _related_commits_hint(c: ChangeEntry) -> str:
+    if not c.related_commits:
+        return ""
+    rows = "".join(
+        f'<li><code>{_e(rc.short_sha)}</code> {_e(rc.subject)} '
+        f'<span class="muted">({len(rc.files_changed)} file(s), touches a file this change also touched)</span></li>'
+        for rc in c.related_commits
+    )
+    return f"""
+      <div class="risk-hint">
+        <strong>Possibly related target commit(s)</strong> — same file(s) touched, but the diff didn't
+        match automatically. Worth checking manually in case this was ported by hand rather than cherry-picked:
+        <ul>{rows}</ul>
+      </div>"""
+
+
+def _manual_check_commands(c: ChangeEntry, m) -> str:
+    src, tgt = c.source_commit, c.target_commit
+    lines = []
+    if src:
+        lines.append(f"git show {src.sha}")
+        if src.files_changed:
+            lines.append(f"git log {m.target_branch} -- {src.files_changed[0]}   # see target-branch history for this file")
+    if tgt:
+        lines.append(f"git show {tgt.sha}")
+    if not lines:
+        return ""
+    cmds = "\n".join(lines)
+    return f'<details class="risk-cmds"><summary>Commands to verify manually</summary><pre>{_e(cmds)}</pre></details>'
+
+
+def _render_missing_card(c: ChangeEntry, tone: str = "danger", metadata=None) -> str:
     src = c.source_commit
     tgt = c.target_commit
     heading = "POTENTIALLY MISSING FROM TARGET" if tone == "danger" else "NEEDS REVIEW"
@@ -246,6 +292,13 @@ def _render_missing_card(c: ChangeEntry, tone: str = "danger") -> str:
         <div><span class="meta-k">Equivalent in target</span><span class="meta-v">{_e(tgt.short_sha) if tgt else "NOT FOUND"}</span></div>
         <div><span class="meta-k">Basis</span><span class="meta-v">{_e(c.classification_reason)}</span></div>
       </div>
+      <div class="risk-files-block">
+        <span class="meta-k">Files changed (source)</span>
+        {_files_list(src)}
+      </div>
+      {_diff_snippet(src)}
+      {_related_commits_hint(c)}
+      {_manual_check_commands(c, metadata) if metadata else ""}
       <div class="risk-actions">
         Action required:
         <label><input type="checkbox" disabled> Carry forward</label>
@@ -360,6 +413,19 @@ table.commit-meta td{padding:2px 0;word-break:break-word;}
 .risk-change-id{font-family:monospace;font-size:15px;font-weight:700;color:var(--navy);}
 .risk-desc{font-size:14px;margin:2px 0 10px;}
 .risk-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 20px;font-size:12px;margin-bottom:10px;}
+.risk-files-block{margin-bottom:10px;}
+.risk-files{list-style:none;margin:4px 0 0;padding:0;font-size:12px;font-family:monospace;color:var(--charcoal);}
+.risk-files li{padding:1px 0;}
+.risk-files li.more{color:var(--muted);font-style:italic;}
+.risk-diff{margin:10px 0;font-size:12px;}
+.risk-diff summary{cursor:pointer;color:var(--navy);font-weight:600;}
+.risk-diff pre{background:#0f1b2d;color:#d6e0f0;padding:12px;border-radius:4px;overflow-x:auto;font-size:11px;line-height:1.5;margin-top:6px;max-height:320px;overflow-y:auto;}
+.risk-hint{margin:10px 0;font-size:12px;background:rgba(255,255,255,.5);border:1px solid var(--border);border-radius:4px;padding:10px 12px;}
+.risk-hint ul{margin:6px 0 0;padding-left:18px;}
+.risk-hint .muted{color:var(--muted);}
+.risk-cmds{margin:10px 0;font-size:12px;}
+.risk-cmds summary{cursor:pointer;color:var(--navy);font-weight:600;}
+.risk-cmds pre{background:#eef1f6;color:var(--navy);padding:10px 12px;border-radius:4px;overflow-x:auto;font-size:11.5px;margin-top:6px;}
 .risk-actions{font-size:12px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
 .risk-actions label{display:inline-flex;gap:4px;align-items:center;}
 

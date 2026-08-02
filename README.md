@@ -138,6 +138,32 @@ model are in **`DESIGN.md`**.
 | `REVERTED` | A target commit reverts an earlier change |
 | `NEEDS REVIEW` | Git's signals disagreed or were insufficient — flagged rather than guessed |
 
+### Investigating a "Potentially Missing" item
+
+Every card in the "Potentially Missing" and "Needs Review" sections
+includes, inline, without leaving the report:
+
+- **Files changed** by the source-side commit
+- **A truncated diff preview** (first ~80 lines) so you can eyeball whether
+  it's a real gap without checking out the branch
+- **"Possibly related target commit(s)"** — if any target-only commit
+  touched the same file(s), it's listed as a hint, even when the diff
+  didn't patch-id-match. This is specifically for changes that were
+  manually re-ported (typed by hand, not `git cherry-pick`ed) with a
+  slightly different diff than the original
+- **Copy-pasteable `git show`/`git log` commands** for a full manual check
+  against your real repo
+
+**Does this catch manually re-ported changes (not cherry-picked)?**
+Classification is based purely on **diff content** (via `git patch-id`),
+never on how a commit was created. If someone hand-types the exact same
+change, producing an identical diff, it's correctly recognised as `CARRIED
+FORWARD`, same as a cherry-pick. If the manual port is incomplete or
+differs even slightly, it won't patch-id-match, and shows as `MISSING` or
+`NEEDS REVIEW` rather than silently passing — the related-commit
+file-overlap hint above exists specifically to surface these without
+requiring a manual search.
+
 ---
 
 ## CI/CD pipeline integration
@@ -208,6 +234,12 @@ python -m unittest discover -s tests -v
 - `tests/test_edge_cases.py` — merge commits with real diffs, reworked
   fixes (same Jira ID, different diff → `NEEDS REVIEW` not a false
   `MISSING` alarm), and `github_api` URL-parsing helpers.
+- `tests/test_integration.py` also covers **manual (non-cherry-pick)
+  porting**: an identical hand-typed change still classifies as `CARRIED
+  FORWARD`, an incomplete/different hand-port downgrades to `NEEDS
+  REVIEW`/`MISSING` rather than silently passing, and the file-overlap
+  hint (`related_commits`) correctly surfaces a same-file target commit
+  even with no matching change ID to correlate on.
 
 All tests operate on real Git object data (no mocking of git commands),
 since the whole point of this tool is correct behaviour against real Git

@@ -146,6 +146,24 @@ def log_range(repo_dir: str, range_expr: str) -> list[RawCommit]:
     return commits
 
 
+def diff_preview(repo_dir: str, sha: str, max_lines: int = 80) -> str:
+    """Return a truncated unified diff for a single commit vs its first
+    parent (or the empty tree for a root commit), for display purposes.
+
+    This is intentionally capped -- it's meant to let a reviewer eyeball
+    whether a MISSING/NEEDS_REVIEW change is a real gap without leaving the
+    report, not to replace `git show` for a full review.
+    """
+    parents = _run(repo_dir, ["rev-parse", f"{sha}^@"], check=False).split()
+    base = parents[0] if parents else _empty_tree(repo_dir)
+    diff = _run(repo_dir, ["diff", base, sha], check=False)
+    lines = diff.splitlines()
+    if len(lines) <= max_lines:
+        return diff
+    truncated = "\n".join(lines[:max_lines])
+    return f"{truncated}\n... (+{len(lines) - max_lines} more lines, truncated)"
+
+
 def diff_stat_files(repo_dir: str, sha: str) -> tuple[list[str], int, int]:
     """Return (files_changed, insertions, deletions) for a single commit,
     diffed against its first parent (or the empty tree for a root commit)."""
