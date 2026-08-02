@@ -103,5 +103,65 @@ class TestHtmlRendererDoesNotCrash(unittest.TestCase):
         self.assertNotIn("cdn.", html.lower())
 
 
+class TestDiffParser(unittest.TestCase):
+    def test_parses_added_and_removed_lines_with_correct_line_numbers(self):
+        from releaseanalyzer import diff_parser
+        sample = (
+            "diff --git a/f.py b/f.py\n"
+            "index 111..222 100644\n"
+            "--- a/f.py\n"
+            "+++ b/f.py\n"
+            "@@ -1,3 +1,3 @@\n"
+            " def x():\n"
+            "-    return 1\n"
+            "+    return 2\n"
+        )
+        files = diff_parser.parse_unified_diff(sample)
+        self.assertEqual(len(files), 1)
+        self.assertEqual(files[0].path, "f.py")
+        self.assertFalse(files[0].is_new)
+        hunk = files[0].hunks[0]
+        types = [l.type for l in hunk.lines]
+        self.assertEqual(types, ["context", "remove", "add"])
+        self.assertEqual(hunk.lines[0].old_lineno, 1)
+        self.assertEqual(hunk.lines[0].new_lineno, 1)
+        self.assertEqual(hunk.lines[1].old_lineno, 2)
+        self.assertIsNone(hunk.lines[1].new_lineno)
+        self.assertIsNone(hunk.lines[2].old_lineno)
+        self.assertEqual(hunk.lines[2].new_lineno, 2)
+
+    def test_detects_new_file(self):
+        from releaseanalyzer import diff_parser
+        sample = (
+            "diff --git a/new.py b/new.py\n"
+            "new file mode 100644\n"
+            "index 0000000..abc123\n"
+            "--- /dev/null\n"
+            "+++ b/new.py\n"
+            "@@ -0,0 +1,2 @@\n"
+            "+line one\n"
+            "+line two\n"
+        )
+        files = diff_parser.parse_unified_diff(sample)
+        self.assertTrue(files[0].is_new)
+        self.assertEqual(files[0].path, "new.py")
+        self.assertEqual(len(files[0].hunks[0].lines), 2)
+
+    def test_multiple_files_in_one_diff(self):
+        from releaseanalyzer import diff_parser
+        sample = (
+            "diff --git a/a.py b/a.py\n"
+            "index 1..2 100644\n"
+            "--- a/a.py\n+++ b/a.py\n"
+            "@@ -1 +1 @@\n-old\n+new\n"
+            "diff --git a/b.py b/b.py\n"
+            "index 1..2 100644\n"
+            "--- a/b.py\n+++ b/b.py\n"
+            "@@ -1 +1 @@\n-x\n+y\n"
+        )
+        files = diff_parser.parse_unified_diff(sample)
+        self.assertEqual([f.path for f in files], ["a.py", "b.py"])
+
+
 if __name__ == "__main__":
     unittest.main()

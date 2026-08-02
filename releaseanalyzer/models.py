@@ -30,6 +30,30 @@ class Confidence(str, Enum):
 
 
 @dataclass
+class DiffLine:
+    type: str          # "context" | "add" | "remove"
+    content: str
+    old_lineno: Optional[int] = None
+    new_lineno: Optional[int] = None
+
+
+@dataclass
+class DiffHunk:
+    header: str
+    lines: list[DiffLine] = field(default_factory=list)
+
+
+@dataclass
+class DiffFile:
+    path: str
+    is_new: bool = False
+    is_deleted: bool = False
+    is_binary: bool = False
+    hunks: list[DiffHunk] = field(default_factory=list)
+    truncated: bool = False   # true if this file's diff was cut off for size
+
+
+@dataclass
 class Commit:
     sha: str
     author_name: str
@@ -44,7 +68,8 @@ class Commit:
     pr_url: Optional[str] = None
     pr_state: Optional[str] = None       # open / closed / merged
     patch_id: Optional[str] = None
-    diff_text: Optional[str] = None      # truncated unified diff, for inline review
+    diff_text: Optional[str] = None      # truncated unified diff (plain text, for JSON/fallback)
+    diff_files: list[DiffFile] = field(default_factory=list)   # structured, per-file, for colorized HTML rendering
     is_merge: bool = False
     files_changed: list[str] = field(default_factory=list)
     insertions: int = 0

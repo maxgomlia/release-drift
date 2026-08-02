@@ -146,17 +146,17 @@ def log_range(repo_dir: str, range_expr: str) -> list[RawCommit]:
     return commits
 
 
-def diff_preview(repo_dir: str, sha: str, max_lines: int = 80) -> str:
-    """Return a truncated unified diff for a single commit vs its first
-    parent (or the empty tree for a root commit), for display purposes.
-
-    This is intentionally capped -- it's meant to let a reviewer eyeball
-    whether a MISSING/NEEDS_REVIEW change is a real gap without leaving the
-    report, not to replace `git show` for a full review.
-    """
+def raw_diff(repo_dir: str, sha: str) -> str:
+    """Full unified diff for a commit vs its first parent (or the empty
+    tree for a root commit). No truncation -- callers truncate as needed."""
     parents = _run(repo_dir, ["rev-parse", f"{sha}^@"], check=False).split()
     base = parents[0] if parents else _empty_tree(repo_dir)
-    diff = _run(repo_dir, ["diff", base, sha], check=False)
+    return _run(repo_dir, ["diff", base, sha], check=False)
+
+
+def diff_preview(repo_dir: str, sha: str, max_lines: int = 80) -> str:
+    """Truncated single-string diff (plain-text fallback, e.g. for JSON)."""
+    diff = raw_diff(repo_dir, sha)
     lines = diff.splitlines()
     if len(lines) <= max_lines:
         return diff

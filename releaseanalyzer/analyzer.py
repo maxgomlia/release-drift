@@ -21,7 +21,7 @@ import logging
 import re
 from datetime import datetime, timezone
 
-from . import git_ops
+from . import diff_parser, git_ops
 from .models import (
     ChangeEntry, Classification, Commit, Confidence, RunMetadata,
     SummaryCounts, ReleaseComparison, TOOL_VERSION,
@@ -326,8 +326,11 @@ def _enrich_attention_entries(
     """For MISSING/NEEDS_REVIEW entries only (kept selective for performance
     on large repos), populate:
 
-    1. A truncated diff preview on the relevant commit(s), so a reviewer can
-       eyeball whether this is a real gap without leaving the report.
+    1. A structured, per-file, per-line diff (`diff_files`) on the relevant
+       commit(s), for colorized GitHub-PR-style rendering, plus a plain-text
+       fallback (`diff_text`) for JSON/non-HTML consumers. One git call
+       produces both -- the plain text is truncated for size, the structured
+       version is parsed from the same raw diff with its own per-file cap.
     2. `related_commits`: target-only commits that touched at least one of
        the same files, purely as a "you might want to check this manually"
        hint -- NOT a classification signal. This is the safety net for
@@ -342,7 +345,13 @@ def _enrich_attention_entries(
 
         for commit in (entry.source_commit, entry.target_commit):
             if commit and commit.diff_text is None:
-                commit.diff_text = git_ops.diff_preview(repo_dir, commit.sha)
+                raw = git_ops.raw_diff(repo_dir, commit.sha)
+                raw_lines = raw.splitlines()
+                if len(raw_lines) > 80:
+                    commit.diff_text = "\n".join(raw_lines[:80]) + f"\n... (+{len(raw_lines) - 80} more lines, truncated)"
+                else:
+                    commit.diff_text = raw
+                commit.diff_files = diff_parser.parse_unified_diff(raw, max_lines_per_file=150)
 
         if entry.classification == Classification.MISSING_FROM_TARGET and entry.source_commit:
             source_files = set(entry.source_commit.files_changed)

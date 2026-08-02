@@ -10,13 +10,53 @@
       "merge_commit": false,
       "related_commits": [],
       "source_commit": {
-        "author_date": "2026-08-02T16:55:13+00:00",
+        "author_date": "2026-08-02T17:12:06+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1942",
-        "committer_date": "2026-08-02T16:55:13+00:00",
+        "committer_date": "2026-08-02T17:12:06+00:00",
         "deletions": 0,
+        "diff_files": [
+          {
+            "hunks": [
+              {
+                "header": "@@ -0,0 +1,4 @@",
+                "lines": [
+                  {
+                    "content": "def validate_position(pos):",
+                    "new_lineno": 1,
+                    "old_lineno": null,
+                    "type": "add"
+                  },
+                  {
+                    "content": "    if pos.qty is None:",
+                    "new_lineno": 2,
+                    "old_lineno": null,
+                    "type": "add"
+                  },
+                  {
+                    "content": "        return False",
+                    "new_lineno": 3,
+                    "old_lineno": null,
+                    "type": "add"
+                  },
+                  {
+                    "content": "    return True",
+                    "new_lineno": 4,
+                    "old_lineno": null,
+                    "type": "add"
+                  }
+                ]
+              }
+            ],
+            "is_binary": false,
+            "is_deleted": false,
+            "is_new": true,
+            "path": "src/position.py",
+            "truncated": false
+          }
+        ],
         "diff_text": "diff --git a/src/position.py b/src/position.py\nnew file mode 100644\nindex 0000000..06d3304\n--- /dev/null\n+++ b/src/position.py\n@@ -0,0 +1,4 @@\n+def validate_position(pos):\n+    if pos.qty is None:\n+        return False\n+    return True\n",
         "files_changed": [
           "src/position.py"
@@ -28,8 +68,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "1e9ecbadef352ddcf064b7332e0492db917f9622",
-        "short_sha": "1e9ecbadef",
+        "sha": "7f9e2aa9606b92b57c58a19e5b1c62dcb48519fb",
+        "short_sha": "7f9e2aa960",
         "subject": "RISK-1942 Fix position validation"
       },
       "target_commit": null
@@ -44,13 +84,14 @@
       "merge_commit": false,
       "related_commits": [
         {
-          "author_date": "2026-08-02T16:55:13+00:00",
+          "author_date": "2026-08-02T17:12:06+00:00",
           "author_email": "platform-eng@example.com",
           "author_name": "Platform Engineering",
-          "body": "(cherry picked from commit 50316a58ae5f5e9ce6ff9b6fef0fba280fa90b60)",
+          "body": "(cherry picked from commit 9c415b46b73db7d567d354347d924ab94a1bc1be)",
           "change_id": "RISK-1832",
-          "committer_date": "2026-08-02T16:55:13+00:00",
+          "committer_date": "2026-08-02T17:12:06+00:00",
           "deletions": 0,
+          "diff_files": [],
           "diff_text": null,
           "files_changed": [
             "src/locate.py"
@@ -62,19 +103,71 @@
           "pr_state": null,
           "pr_title": null,
           "pr_url": null,
-          "sha": "338999f6ab38824c6d026d902bd5fcbbd31f2ee6",
-          "short_sha": "338999f6ab",
+          "sha": "ccc5cd85716f0498f06e777c52acbb7f9b7d7de8",
+          "short_sha": "ccc5cd8571",
           "subject": "RISK-1832 Fix locate validation"
         }
       ],
       "source_commit": {
-        "author_date": "2026-08-02T16:55:13+00:00",
+        "author_date": "2026-08-02T17:12:06+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1955",
-        "committer_date": "2026-08-02T16:55:13+00:00",
+        "committer_date": "2026-08-02T17:12:06+00:00",
         "deletions": 0,
+        "diff_files": [
+          {
+            "hunks": [
+              {
+                "header": "@@ -2,3 +2,6 @@ def validate(order):",
+                "lines": [
+                  {
+                    "content": "    if order.qty <= 0:",
+                    "new_lineno": 2,
+                    "old_lineno": 2,
+                    "type": "context"
+                  },
+                  {
+                    "content": "        return False",
+                    "new_lineno": 3,
+                    "old_lineno": 3,
+                    "type": "context"
+                  },
+                  {
+                    "content": "    return True",
+                    "new_lineno": 4,
+                    "old_lineno": 4,
+                    "type": "context"
+                  },
+                  {
+                    "content": "",
+                    "new_lineno": 5,
+                    "old_lineno": null,
+                    "type": "add"
+                  },
+                  {
+                    "content": "def log(msg):",
+                    "new_lineno": 6,
+                    "old_lineno": null,
+                    "type": "add"
+                  },
+                  {
+                    "content": "    print(msg)",
+                    "new_lineno": 7,
+                    "old_lineno": null,
+                    "type": "add"
+                  }
+                ]
+              }
+            ],
+            "is_binary": false,
+            "is_deleted": false,
+            "is_new": false,
+            "path": "src/locate.py",
+            "truncated": false
+          }
+        ],
         "diff_text": "diff --git a/src/locate.py b/src/locate.py\nindex 4582c6b..6c5d171 100644\n--- a/src/locate.py\n+++ b/src/locate.py\n@@ -2,3 +2,6 @@ def validate(order):\n     if order.qty <= 0:\n         return False\n     return True\n+\n+def log(msg):\n+    print(msg)\n",
         "files_changed": [
           "src/locate.py"
@@ -86,8 +179,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "bbb7361bf5c6fb91d68512ec2545849520586ab3",
-        "short_sha": "bbb7361bf5",
+        "sha": "91f255d789755f42e07ba2ea3a9c2fd5342a8a11",
+        "short_sha": "91f255d789",
         "subject": "RISK-1955 Minor logging cleanup in locate service"
       },
       "target_commit": null
@@ -104,13 +197,53 @@
       "merge_commit": false,
       "related_commits": [],
       "source_commit": {
-        "author_date": "2026-08-02T16:55:13+00:00",
+        "author_date": "2026-08-02T17:12:06+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1942",
-        "committer_date": "2026-08-02T16:55:13+00:00",
+        "committer_date": "2026-08-02T17:12:06+00:00",
         "deletions": 0,
+        "diff_files": [
+          {
+            "hunks": [
+              {
+                "header": "@@ -0,0 +1,4 @@",
+                "lines": [
+                  {
+                    "content": "def validate_position(pos):",
+                    "new_lineno": 1,
+                    "old_lineno": null,
+                    "type": "add"
+                  },
+                  {
+                    "content": "    if pos.qty is None:",
+                    "new_lineno": 2,
+                    "old_lineno": null,
+                    "type": "add"
+                  },
+                  {
+                    "content": "        return False",
+                    "new_lineno": 3,
+                    "old_lineno": null,
+                    "type": "add"
+                  },
+                  {
+                    "content": "    return True",
+                    "new_lineno": 4,
+                    "old_lineno": null,
+                    "type": "add"
+                  }
+                ]
+              }
+            ],
+            "is_binary": false,
+            "is_deleted": false,
+            "is_new": true,
+            "path": "src/position.py",
+            "truncated": false
+          }
+        ],
         "diff_text": "diff --git a/src/position.py b/src/position.py\nnew file mode 100644\nindex 0000000..06d3304\n--- /dev/null\n+++ b/src/position.py\n@@ -0,0 +1,4 @@\n+def validate_position(pos):\n+    if pos.qty is None:\n+        return False\n+    return True\n",
         "files_changed": [
           "src/position.py"
@@ -122,8 +255,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "1e9ecbadef352ddcf064b7332e0492db917f9622",
-        "short_sha": "1e9ecbadef",
+        "sha": "7f9e2aa9606b92b57c58a19e5b1c62dcb48519fb",
+        "short_sha": "7f9e2aa960",
         "subject": "RISK-1942 Fix position validation"
       },
       "target_commit": null
@@ -138,13 +271,14 @@
       "merge_commit": false,
       "related_commits": [
         {
-          "author_date": "2026-08-02T16:55:13+00:00",
+          "author_date": "2026-08-02T17:12:06+00:00",
           "author_email": "platform-eng@example.com",
           "author_name": "Platform Engineering",
-          "body": "(cherry picked from commit 50316a58ae5f5e9ce6ff9b6fef0fba280fa90b60)",
+          "body": "(cherry picked from commit 9c415b46b73db7d567d354347d924ab94a1bc1be)",
           "change_id": "RISK-1832",
-          "committer_date": "2026-08-02T16:55:13+00:00",
+          "committer_date": "2026-08-02T17:12:06+00:00",
           "deletions": 0,
+          "diff_files": [],
           "diff_text": null,
           "files_changed": [
             "src/locate.py"
@@ -156,19 +290,71 @@
           "pr_state": null,
           "pr_title": null,
           "pr_url": null,
-          "sha": "338999f6ab38824c6d026d902bd5fcbbd31f2ee6",
-          "short_sha": "338999f6ab",
+          "sha": "ccc5cd85716f0498f06e777c52acbb7f9b7d7de8",
+          "short_sha": "ccc5cd8571",
           "subject": "RISK-1832 Fix locate validation"
         }
       ],
       "source_commit": {
-        "author_date": "2026-08-02T16:55:13+00:00",
+        "author_date": "2026-08-02T17:12:06+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1955",
-        "committer_date": "2026-08-02T16:55:13+00:00",
+        "committer_date": "2026-08-02T17:12:06+00:00",
         "deletions": 0,
+        "diff_files": [
+          {
+            "hunks": [
+              {
+                "header": "@@ -2,3 +2,6 @@ def validate(order):",
+                "lines": [
+                  {
+                    "content": "    if order.qty <= 0:",
+                    "new_lineno": 2,
+                    "old_lineno": 2,
+                    "type": "context"
+                  },
+                  {
+                    "content": "        return False",
+                    "new_lineno": 3,
+                    "old_lineno": 3,
+                    "type": "context"
+                  },
+                  {
+                    "content": "    return True",
+                    "new_lineno": 4,
+                    "old_lineno": 4,
+                    "type": "context"
+                  },
+                  {
+                    "content": "",
+                    "new_lineno": 5,
+                    "old_lineno": null,
+                    "type": "add"
+                  },
+                  {
+                    "content": "def log(msg):",
+                    "new_lineno": 6,
+                    "old_lineno": null,
+                    "type": "add"
+                  },
+                  {
+                    "content": "    print(msg)",
+                    "new_lineno": 7,
+                    "old_lineno": null,
+                    "type": "add"
+                  }
+                ]
+              }
+            ],
+            "is_binary": false,
+            "is_deleted": false,
+            "is_new": false,
+            "path": "src/locate.py",
+            "truncated": false
+          }
+        ],
         "diff_text": "diff --git a/src/locate.py b/src/locate.py\nindex 4582c6b..6c5d171 100644\n--- a/src/locate.py\n+++ b/src/locate.py\n@@ -2,3 +2,6 @@ def validate(order):\n     if order.qty <= 0:\n         return False\n     return True\n+\n+def log(msg):\n+    print(msg)\n",
         "files_changed": [
           "src/locate.py"
@@ -180,8 +366,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "bbb7361bf5c6fb91d68512ec2545849520586ab3",
-        "short_sha": "bbb7361bf5",
+        "sha": "91f255d789755f42e07ba2ea3a9c2fd5342a8a11",
+        "short_sha": "91f255d789",
         "subject": "RISK-1955 Minor logging cleanup in locate service"
       },
       "target_commit": null
@@ -191,19 +377,20 @@
       "change_type": "Unknown",
       "classification": "REVERTED",
       "classification_confidence": "MEDIUM",
-      "classification_reason": "Commit message identifies this as a revert of 2fcfaf9530. Could not confirm the reverted commit's classification in this comparison; flagged for manual confirmation.",
+      "classification_reason": "Commit message identifies this as a revert of 8025a6aa89. Could not confirm the reverted commit's classification in this comparison; flagged for manual confirmation.",
       "description": "Revert \"RISK-1990 Experimental order-routing change\"",
       "merge_commit": false,
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T16:55:13+00:00",
+        "author_date": "2026-08-02T17:12:06+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
-        "body": "This reverts commit 2fcfaf95303eb949355c491b0bb8156b37788e52.",
+        "body": "This reverts commit 8025a6aa8963e99bfaa80f2d24a934ffa07ec26a.",
         "change_id": "RISK-1990",
-        "committer_date": "2026-08-02T16:55:13+00:00",
+        "committer_date": "2026-08-02T17:12:06+00:00",
         "deletions": 2,
+        "diff_files": [],
         "diff_text": null,
         "files_changed": [
           "src/routing.py"
@@ -215,8 +402,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "9a7895d2a50186dfde40a1bf995fa9cac34c15f5",
-        "short_sha": "9a7895d2a5",
+        "sha": "0d0ea9b92d6f52caa56fdef6869a1aedb3b63abd",
+        "short_sha": "0d0ea9b92d",
         "subject": "Revert \"RISK-1990 Experimental order-routing change\""
       }
     },
@@ -231,13 +418,14 @@
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T16:55:13+00:00",
+        "author_date": "2026-08-02T17:12:06+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1903",
-        "committer_date": "2026-08-02T16:55:13+00:00",
+        "committer_date": "2026-08-02T17:12:06+00:00",
         "deletions": 0,
+        "diff_files": [],
         "diff_text": null,
         "files_changed": [
           "src/query.py"
@@ -249,8 +437,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "600134151d673181d22c7202e24fc5f7205cecd1",
-        "short_sha": "600134151d",
+        "sha": "9bdc84999f754966f6175512120d49081312f164",
+        "short_sha": "9bdc84999f",
         "subject": "RISK-1903 Add new locate query handling"
       }
     },
@@ -265,13 +453,14 @@
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T16:55:13+00:00",
+        "author_date": "2026-08-02T17:12:06+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1981",
-        "committer_date": "2026-08-02T16:55:13+00:00",
+        "committer_date": "2026-08-02T17:12:06+00:00",
         "deletions": 0,
+        "diff_files": [],
         "diff_text": null,
         "files_changed": [
           "src/throttle.py"
@@ -283,8 +472,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "1705a814dce98f84e145aaf1eee7c4ec5cdfb19d",
-        "short_sha": "1705a814dc",
+        "sha": "86b49600cfe8a11f0e823fa1dc7a8a68d63ecfee",
+        "short_sha": "86b49600cf",
         "subject": "RISK-1981 Add throttling to market data feed"
       }
     },
@@ -299,13 +488,14 @@
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T16:55:13+00:00",
+        "author_date": "2026-08-02T17:12:06+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1990",
-        "committer_date": "2026-08-02T16:55:13+00:00",
+        "committer_date": "2026-08-02T17:12:06+00:00",
         "deletions": 0,
+        "diff_files": [],
         "diff_text": null,
         "files_changed": [
           "src/routing.py"
@@ -317,8 +507,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "2fcfaf95303eb949355c491b0bb8156b37788e52",
-        "short_sha": "2fcfaf9530",
+        "sha": "8025a6aa8963e99bfaa80f2d24a934ffa07ec26a",
+        "short_sha": "8025a6aa89",
         "subject": "RISK-1990 Experimental order-routing change"
       }
     },
@@ -327,18 +517,19 @@
       "change_type": "Bug Fix",
       "classification": "CARRIED FORWARD",
       "classification_confidence": "HIGH",
-      "classification_reason": "Patch-id 9ef8534e2c01 matches target commit 338999f6ab (git cherry corroborates).",
+      "classification_reason": "Patch-id 9ef8534e2c01 matches target commit ccc5cd8571 (git cherry corroborates).",
       "description": "RISK-1832 Fix locate validation",
       "merge_commit": false,
       "related_commits": [],
       "source_commit": {
-        "author_date": "2026-08-02T16:55:13+00:00",
+        "author_date": "2026-08-02T17:12:06+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1832",
-        "committer_date": "2026-08-02T16:55:13+00:00",
+        "committer_date": "2026-08-02T17:12:06+00:00",
         "deletions": 0,
+        "diff_files": [],
         "diff_text": null,
         "files_changed": [
           "src/locate.py"
@@ -350,18 +541,19 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "50316a58ae5f5e9ce6ff9b6fef0fba280fa90b60",
-        "short_sha": "50316a58ae",
+        "sha": "9c415b46b73db7d567d354347d924ab94a1bc1be",
+        "short_sha": "9c415b46b7",
         "subject": "RISK-1832 Fix locate validation"
       },
       "target_commit": {
-        "author_date": "2026-08-02T16:55:13+00:00",
+        "author_date": "2026-08-02T17:12:06+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
-        "body": "(cherry picked from commit 50316a58ae5f5e9ce6ff9b6fef0fba280fa90b60)",
+        "body": "(cherry picked from commit 9c415b46b73db7d567d354347d924ab94a1bc1be)",
         "change_id": "RISK-1832",
-        "committer_date": "2026-08-02T16:55:13+00:00",
+        "committer_date": "2026-08-02T17:12:06+00:00",
         "deletions": 0,
+        "diff_files": [],
         "diff_text": null,
         "files_changed": [
           "src/locate.py"
@@ -373,8 +565,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "338999f6ab38824c6d026d902bd5fcbbd31f2ee6",
-        "short_sha": "338999f6ab",
+        "sha": "ccc5cd85716f0498f06e777c52acbb7f9b7d7de8",
+        "short_sha": "ccc5cd8571",
         "subject": "RISK-1832 Fix locate validation"
       }
     },
@@ -383,18 +575,19 @@
       "change_type": "Unknown",
       "classification": "CARRIED FORWARD",
       "classification_confidence": "HIGH",
-      "classification_reason": "Patch-id 241390a43d2d matches target commit 5cafa6dfac (git cherry corroborates).",
+      "classification_reason": "Patch-id 241390a43d2d matches target commit 6ef0120a76 (git cherry corroborates).",
       "description": "RISK-1871 Position cache correction",
       "merge_commit": false,
       "related_commits": [],
       "source_commit": {
-        "author_date": "2026-08-02T16:55:13+00:00",
+        "author_date": "2026-08-02T17:12:06+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1871",
-        "committer_date": "2026-08-02T16:55:13+00:00",
+        "committer_date": "2026-08-02T17:12:06+00:00",
         "deletions": 0,
+        "diff_files": [],
         "diff_text": null,
         "files_changed": [
           "src/cache.py"
@@ -406,18 +599,19 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "38862675071b10fa17d8a033e59a5c4f55e40e1f",
-        "short_sha": "3886267507",
+        "sha": "e77dc5bb2de71c238d3de801b6015146e41d8158",
+        "short_sha": "e77dc5bb2d",
         "subject": "RISK-1871 Position cache correction"
       },
       "target_commit": {
-        "author_date": "2026-08-02T16:55:13+00:00",
+        "author_date": "2026-08-02T17:12:06+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
-        "body": "(cherry picked from commit 38862675071b10fa17d8a033e59a5c4f55e40e1f)",
+        "body": "(cherry picked from commit e77dc5bb2de71c238d3de801b6015146e41d8158)",
         "change_id": "RISK-1871",
-        "committer_date": "2026-08-02T16:55:13+00:00",
+        "committer_date": "2026-08-02T17:12:06+00:00",
         "deletions": 0,
+        "diff_files": [],
         "diff_text": null,
         "files_changed": [
           "src/cache.py"
@@ -429,13 +623,13 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "5cafa6dfac6f63ba8559c5032eb42f4506776d72",
-        "short_sha": "5cafa6dfac",
+        "sha": "6ef0120a76a5518cea8a6908f543034739ec2dba",
+        "short_sha": "6ef0120a76",
         "subject": "RISK-1871 Position cache correction"
       }
     },
     {
-      "change_id": "COMMIT-3d9ae669c4",
+      "change_id": "COMMIT-e062b0459a",
       "change_type": "Chore",
       "classification": "TARGET-ONLY CHANGE",
       "classification_confidence": "MEDIUM",
@@ -445,13 +639,14 @@
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T16:55:13+00:00",
+        "author_date": "2026-08-02T17:12:06+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": null,
-        "committer_date": "2026-08-02T16:55:13+00:00",
+        "committer_date": "2026-08-02T17:12:06+00:00",
         "deletions": 1,
+        "diff_files": [],
         "diff_text": null,
         "files_changed": [
           "pom.xml"
@@ -463,24 +658,24 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "3d9ae669c49048eb5691538c728e13e6ea953266",
-        "short_sha": "3d9ae669c4",
+        "sha": "e062b0459a8dc104d1978bdb62fb7660ff9606cd",
+        "short_sha": "e062b0459a",
         "subject": "Release 26.06 version bump"
       }
     }
   ],
   "metadata": {
     "comparison_algorithm": "merge-base divergence + bidirectional git-patch-id pairing, cross-checked against git-cherry patch-equivalence",
-    "generated_at": "2026-08-02T16:55:13+00:00",
+    "generated_at": "2026-08-02T17:12:06+00:00",
     "merge_base_candidates": [
-      "2c9aec6aefdb1161fd838338477ed991c23b898c"
+      "d023a2e9e31ac2b924cc38c06091b701c8f8790a"
     ],
-    "merge_base_sha": "2c9aec6aefdb1161fd838338477ed991c23b898c",
+    "merge_base_sha": "d023a2e9e31ac2b924cc38c06091b701c8f8790a",
     "repository": "https://git.example.com/risk-platform/locate-service.git",
     "source_branch": "release/26.05",
-    "source_sha": "bbb7361bf5c6fb91d68512ec2545849520586ab3",
+    "source_sha": "91f255d789755f42e07ba2ea3a9c2fd5342a8a11",
     "target_branch": "release/26.06",
-    "target_sha": "9a7895d2a50186dfde40a1bf995fa9cac34c15f5",
+    "target_sha": "0d0ea9b92d6f52caa56fdef6869a1aedb3b63abd",
     "tool_version": "2.0.0"
   },
   "release_status": "RELEASE REVIEW REQUIRED",

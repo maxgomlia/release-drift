@@ -145,12 +145,18 @@ model are in **`DESIGN.md`**.
 
 ### Investigating a "Potentially Missing" item
 
-Every card in the "Potentially Missing" and "Needs Review" sections
-includes, inline, without leaving the report:
+Every card in the "Potentially Missing" and "Needs Review" sections is
+collapsed by default, showing just the change ID and description so the
+report stays scannable. Click a card to expand it and reveal, without
+leaving the report:
 
 - **Files changed** by the source-side commit
-- **A truncated diff preview** (first ~80 lines) so you can eyeball whether
-  it's a real gap without checking out the branch
+- **A colorized, per-file diff** (GitHub PR style — green for added lines,
+  red for removed, with line numbers). Each file starts collapsed too —
+  click a filename to reveal its diff, so you only load the diffs you
+  actually want to inspect. For `NEEDS REVIEW` items with both a source
+  and target commit (e.g. a reworked fix), both diffs are available so you
+  can visually compare intent.
 - **"Possibly related target commit(s)"** — if any target-only commit
   touched the same file(s), it's listed as a hint, even when the diff
   didn't patch-id-match. This is specifically for changes that were
@@ -158,6 +164,10 @@ includes, inline, without leaving the report:
   slightly different diff than the original
 - **Copy-pasteable `git show`/`git log` commands** for a full manual check
   against your real repo
+
+Printing/saving-as-PDF automatically expands everything first (and
+restores your view afterwards), so an archived copy always shows the full
+detail regardless of what was expanded on screen.
 
 **Does this catch manually re-ported changes (not cherry-picked)?**
 Classification is based purely on **diff content** (via `git patch-id`),
@@ -226,7 +236,9 @@ python -m unittest discover -s tests -v
 ```
 
 - `tests/test_units.py` — unit tests for `git_ops` (merge-base, patch-id
-  stability, log parsing, cherry) and a smoke test of the HTML renderer.
+  stability, log parsing, cherry), `diff_parser` (added/removed line
+  numbering, new-file detection, multi-file diffs), and a smoke test of
+  the HTML renderer.
 - `tests/test_integration.py` — full end-to-end tests against real,
   throwaway Git repositories (built by `tests/repo_builder.py`), including:
   - **A cherry-pick/regression scenario**: a fix cherry-picked into the
@@ -275,6 +287,7 @@ releaseanalyzer/                core package
   git_ops.py
   analyzer.py
   github_api.py                  optional, read-only PR enrichment (GitHub Enterprise API)
+  diff_parser.py                  parses unified diff into structured, colorizable per-line data
   models.py
   report_html.py
   report_json.py

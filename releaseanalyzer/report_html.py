@@ -232,19 +232,67 @@ def _render_row(c: ChangeEntry, idx: int) -> str:
     </tr>"""
 
 
-def _files_list(commit) -> str:
-    if not commit or not commit.files_changed:
-        return "—"
-    shown = commit.files_changed[:12]
-    items = "".join(f"<li>{_e(f)}</li>" for f in shown)
-    more = f"<li class='more'>+{len(commit.files_changed) - 12} more</li>" if len(commit.files_changed) > 12 else ""
-    return f'<ul class="risk-files">{items}{more}</ul>'
+def _render_diff_line(line) -> str:
+    old_no = line.old_lineno if line.old_lineno is not None else ""
+    new_no = line.new_lineno if line.new_lineno is not None else ""
+    marker = {"add": "+", "remove": "-", "context": " "}[line.type]
+    row_class = f"diff-row diff-row-{line.type}"
+    return (
+        f'<tr class="{row_class}">'
+        f'<td class="diff-lineno">{old_no}</td>'
+        f'<td class="diff-lineno">{new_no}</td>'
+        f'<td class="diff-marker">{marker}</td>'
+        f'<td class="diff-code">{_e(line.content)}</td>'
+        f'</tr>'
+    )
 
 
-def _diff_snippet(commit) -> str:
-    if not commit or not commit.diff_text:
+def _render_diff_file(diff_file) -> str:
+    badge = ""
+    if diff_file.is_new:
+        badge = '<span class="badge badge-info">new file</span>'
+    elif diff_file.is_deleted:
+        badge = '<span class="badge badge-danger">deleted</span>'
+    elif diff_file.is_binary:
+        return f'<div class="diff-file"><div class="diff-file-header">{_e(diff_file.path)} <span class="badge badge-neutral">binary</span></div></div>'
+
+    hunks_html = []
+    for hunk in diff_file.hunks:
+        rows = "".join(_render_diff_line(l) for l in hunk.lines)
+        hunks_html.append(
+            f'<tr class="diff-hunk-header-row"><td colspan="4">{_e(hunk.header)}</td></tr>{rows}'
+        )
+    truncated_note = (
+        '<tr><td colspan="4" class="diff-truncated-note">... file truncated for display, see full diff via `git show`</td></tr>'
+        if diff_file.truncated else ""
+    )
+    return f"""
+    <details class="diff-file">
+      <summary class="diff-file-header">{_e(diff_file.path)} {badge}</summary>
+      <table class="diff-table">
+        <tbody>{"".join(hunks_html)}{truncated_note}</tbody>
+      </table>
+    </details>"""
+
+
+def _render_commit_diff(commit, label: str) -> str:
+    if not commit:
         return ""
-    return f'<details class="risk-diff"><summary>Show diff ({commit.short_sha})</summary><pre>{_e(commit.diff_text)}</pre></details>'
+    if not commit.diff_files:
+        if commit.diff_text:
+            return f'<details class="risk-diff"><summary>{_e(label)} diff ({commit.short_sha})</summary><pre>{_e(commit.diff_text)}</pre></details>'
+        return ""
+    files_html = "".join(_render_diff_file(f) for f in commit.diff_files[:8])
+    overflow = ""
+    if len(commit.diff_files) > 8:
+        overflow_names = ", ".join(_e(f.path) for f in commit.diff_files[8:])
+        overflow = f'<p class="diff-overflow-note">+{len(commit.diff_files) - 8} more file(s) not shown: {overflow_names}</p>'
+    return f"""
+    <div class="diff-block">
+      <div class="diff-block-label">{_e(label)} diff — {_e(commit.short_sha)}</div>
+      {files_html}
+      {overflow}
+    </div>"""
 
 
 def _related_commits_hint(c: ChangeEntry) -> str:
@@ -282,30 +330,36 @@ def _render_missing_card(c: ChangeEntry, tone: str = "danger", metadata=None) ->
     src = c.source_commit
     tgt = c.target_commit
     heading = "POTENTIALLY MISSING FROM TARGET" if tone == "danger" else "NEEDS REVIEW"
+    # For NEEDS_REVIEW with both sides present (e.g. a reworked fix), show
+    # both diffs so they can be visually compared side by side in intent.
+    diffs_html = _render_commit_diff(src, "Source") + _render_commit_diff(tgt, "Target")
+    file_count = len((src.files_changed if src else []) or (tgt.files_changed if tgt else []))
+    file_word = "file" if file_count == 1 else "files"
     return f"""
-    <div class="risk-card risk-{tone}">
-      <div class="risk-heading">&#9888; {heading}</div>
-      <div class="risk-change-id">{_e(c.change_id)}</div>
-      <div class="risk-desc">{_e(c.description)}</div>
-      <div class="risk-meta">
-        <div><span class="meta-k">Present in</span><span class="meta-v">source release{f" — {_e(src.short_sha)}" if src else ""}</span></div>
-        <div><span class="meta-k">Equivalent in target</span><span class="meta-v">{_e(tgt.short_sha) if tgt else "NOT FOUND"}</span></div>
-        <div><span class="meta-k">Basis</span><span class="meta-v">{_e(c.classification_reason)}</span></div>
+    <details class="risk-card risk-{tone}">
+      <summary class="risk-card-summary">
+        <div class="risk-heading">&#9888; {heading}</div>
+        <div class="risk-change-id">{_e(c.change_id)}</div>
+        <div class="risk-desc">{_e(c.description)}</div>
+        <div class="risk-summary-meta">{file_count} {file_word} changed &middot; click to see details and diff</div>
+      </summary>
+      <div class="risk-card-body">
+        <div class="risk-meta">
+          <div><span class="meta-k">Present in</span><span class="meta-v">source release{f" — {_e(src.short_sha)}" if src else ""}</span></div>
+          <div><span class="meta-k">Equivalent in target</span><span class="meta-v">{_e(tgt.short_sha) if tgt else "NOT FOUND"}</span></div>
+          <div><span class="meta-k">Basis</span><span class="meta-v">{_e(c.classification_reason)}</span></div>
+        </div>
+        {diffs_html}
+        {_related_commits_hint(c)}
+        {_manual_check_commands(c, metadata) if metadata else ""}
+        <div class="risk-actions">
+          Action required:
+          <label><input type="checkbox" disabled> Carry forward</label>
+          <label><input type="checkbox" disabled> Confirm not applicable</label>
+          <label><input type="checkbox" disabled> Investigate</label>
+        </div>
       </div>
-      <div class="risk-files-block">
-        <span class="meta-k">Files changed (source)</span>
-        {_files_list(src)}
-      </div>
-      {_diff_snippet(src)}
-      {_related_commits_hint(c)}
-      {_manual_check_commands(c, metadata) if metadata else ""}
-      <div class="risk-actions">
-        Action required:
-        <label><input type="checkbox" disabled> Carry forward</label>
-        <label><input type="checkbox" disabled> Confirm not applicable</label>
-        <label><input type="checkbox" disabled> Investigate</label>
-      </div>
-    </div>"""
+    </details>"""
 
 
 def _render_branch_svg(comparison: ReleaseComparison) -> str:
@@ -405,21 +459,45 @@ table.commit-meta td{padding:2px 0;word-break:break-word;}
 .badge-info{background:var(--blue-bg);color:var(--blue);}
 .badge-neutral{background:#eef1f6;color:var(--muted);}
 
-.risk-card{border-radius:6px;padding:16px 20px;margin-bottom:14px;border:1px solid var(--border);}
+.risk-card{border-radius:6px;padding:0;margin-bottom:14px;border:1px solid var(--border);overflow:hidden;}
 .risk-danger{background:var(--red-bg);border-color:#f0c4c0;}
 .risk-warn{background:var(--amber-bg);border-color:#f2dfa0;}
-.risk-heading{font-weight:700;font-size:12px;letter-spacing:.03em;color:var(--red);margin-bottom:6px;}
+.risk-card-summary{cursor:pointer;padding:16px 20px;list-style:none;}
+.risk-card-summary::-webkit-details-marker{display:none;}
+.risk-card-summary::before{content:"▸ ";color:var(--muted);font-size:11px;}
+.risk-card[open] .risk-card-summary::before{content:"▾ ";}
+.risk-heading{font-weight:700;font-size:12px;letter-spacing:.03em;color:var(--red);margin-bottom:6px;display:inline-block;}
 .risk-warn .risk-heading{color:var(--amber);}
 .risk-change-id{font-family:monospace;font-size:15px;font-weight:700;color:var(--navy);}
-.risk-desc{font-size:14px;margin:2px 0 10px;}
-.risk-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 20px;font-size:12px;margin-bottom:10px;}
-.risk-files-block{margin-bottom:10px;}
-.risk-files{list-style:none;margin:4px 0 0;padding:0;font-size:12px;font-family:monospace;color:var(--charcoal);}
-.risk-files li{padding:1px 0;}
-.risk-files li.more{color:var(--muted);font-style:italic;}
+.risk-desc{font-size:14px;margin:2px 0 6px;}
+.risk-summary-meta{font-size:11.5px;color:var(--muted);}
+.risk-card-body{padding:0 20px 16px;border-top:1px solid rgba(0,0,0,.06);margin-top:2px;}
+.risk-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 20px;font-size:12px;margin:12px 0 10px;}
 .risk-diff{margin:10px 0;font-size:12px;}
 .risk-diff summary{cursor:pointer;color:var(--navy);font-weight:600;}
 .risk-diff pre{background:#0f1b2d;color:#d6e0f0;padding:12px;border-radius:4px;overflow-x:auto;font-size:11px;line-height:1.5;margin-top:6px;max-height:320px;overflow-y:auto;}
+
+.diff-block{margin:12px 0;}
+.diff-block-label{font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px;}
+.diff-file{border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:10px;background:#fff;}
+.diff-file-header{cursor:pointer;padding:8px 12px;background:#f6f8fa;font-family:monospace;font-size:12.5px;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:8px;list-style:none;}
+.diff-file-header::-webkit-details-marker{display:none;}
+.diff-file-header::before{content:"▾";color:var(--muted);font-size:10px;}
+.diff-file[open] .diff-file-header::before{content:"▾";}
+.diff-file:not([open]) .diff-file-header::before{content:"▸";}
+table.diff-table{width:100%;border-collapse:collapse;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;}
+tr.diff-hunk-header-row td{background:#f1f8ff;color:#586069;padding:4px 10px;font-size:11.5px;}
+tr.diff-row td{padding:0 8px;white-space:pre;vertical-align:top;}
+td.diff-lineno{width:1%;min-width:32px;text-align:right;color:#8a94a3;user-select:none;padding-right:6px !important;border-right:1px solid var(--border);}
+td.diff-marker{width:1%;text-align:center;user-select:none;color:#8a94a3;}
+td.diff-code{width:100%;}
+tr.diff-row-add{background:#e6ffed;}
+tr.diff-row-add td.diff-code, tr.diff-row-add td.diff-marker{color:#1a7f37;}
+tr.diff-row-remove{background:#ffeef0;}
+tr.diff-row-remove td.diff-code, tr.diff-row-remove td.diff-marker{color:#b3261e;}
+tr.diff-row-context td.diff-code{color:#57606a;}
+td.diff-truncated-note{padding:6px 10px;color:var(--muted);font-style:italic;background:#fafbfc;}
+.diff-overflow-note{font-size:11.5px;color:var(--muted);margin:4px 0 0;}
 .risk-hint{margin:10px 0;font-size:12px;background:rgba(255,255,255,.5);border:1px solid var(--border);border-radius:4px;padding:10px 12px;}
 .risk-hint ul{margin:6px 0 0;padding-left:18px;}
 .risk-hint .muted{color:var(--muted);}
@@ -459,4 +537,22 @@ function toggleRow(id){
   if(!el) return;
   el.classList.toggle('open');
 }
+
+// Archived/printed reports should show everything, regardless of what was
+// expanded on screen -- native <details> content is only rendered when
+// `open` is present, so we force it open for the print pass and restore
+// whatever the user had expanded afterwards.
+(function(){
+  var reopenList = [];
+  window.addEventListener('beforeprint', function(){
+    reopenList = [];
+    document.querySelectorAll('details').forEach(function(d){
+      if(!d.open){ reopenList.push(d); d.open = true; }
+    });
+  });
+  window.addEventListener('afterprint', function(){
+    reopenList.forEach(function(d){ d.open = false; });
+    reopenList = [];
+  });
+})();
 """
