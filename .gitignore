@@ -1,0 +1,13 @@
+# The demo repo is regenerated on demand by example/build_demo_repo.py
+# and is itself a nested Git repository -- never commit it as-is.
+example/demo-repo/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# Local ad-hoc run output
+out/
+*.log

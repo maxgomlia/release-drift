@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Release Change &amp; QA Sign-off Report — release/26.05 → release/26.06</title>
+<style>
+:root{
+  --navy:#0f1b2d; --charcoal:#1f2937; --muted:#5b6b82; --border:#dbe1ea;
+  --bg:#f5f6f8; --card:#ffffff;
+  --green:#1a7f37; --green-bg:#e6f4ea;
+  --amber:#9a6b00; --amber-bg:#fdf3d8;
+  --red:#b3261e; --red-bg:#fbe7e5;
+  --blue:#3d4ea8; --blue-bg:#eaecfa;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--charcoal);}
+.page{max-width:1200px;margin:0 auto;padding:32px 40px 64px;}
+h2{font-size:18px;color:var(--navy);border-bottom:1px solid var(--border);padding-bottom:8px;margin:0 0 12px;}
+h3{font-size:15px;color:var(--navy);margin:20px 0 8px;}
+.section{margin-top:36px;}
+.section-note{color:var(--muted);font-size:13px;margin:0 0 14px;max-width:900px;}
+
+.exec-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+  background:var(--navy);color:#fff;padding:28px 32px;border-radius:6px;}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#9fb0c9;margin-bottom:10px;}
+.release-flow{display:flex;align-items:center;gap:20px;}
+.release-box{min-width:170px;}
+.release-label{font-size:11px;color:#9fb0c9;text-transform:uppercase;letter-spacing:.06em;}
+.release-name{font-size:22px;font-weight:600;font-family:monospace;}
+.release-arrow{font-size:26px;color:#9fb0c9;}
+.status-banner{padding:10px 20px;border-radius:4px;font-weight:700;font-size:14px;letter-spacing:.03em;white-space:nowrap;}
+.status-ready{background:var(--green-bg);color:var(--green);}
+.status-warn{background:var(--amber-bg);color:var(--amber);}
+.status-block{background:var(--red-bg);color:var(--red);}
+
+.meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 24px;background:var(--card);
+  border:1px solid var(--border);border-radius:6px;padding:18px 24px;margin-top:20px;font-size:13px;}
+.meta-k{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
+.meta-v{display:block;color:var(--navy);font-weight:600;word-break:break-all;}
+
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:24px;}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:18px 10px;text-align:center;}
+.kpi-value{font-size:28px;font-weight:700;color:var(--navy);}
+.kpi-label{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.03em;}
+.kpi-danger .kpi-value{color:var(--red);}
+.kpi-warn .kpi-value{color:var(--amber);}
+
+table.change-table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;font-size:13px;}
+table.change-table th{text-align:left;background:#eef1f6;color:var(--navy);padding:10px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.03em;}
+table.change-table td{padding:10px 14px;border-top:1px solid var(--border);}
+.change-row{cursor:pointer;}
+.change-row:hover{background:#f0f3f8;}
+.change-detail-row{display:none;background:#fafbfc;}
+.change-detail-row.open{display:table-row;}
+.change-detail{padding:16px 14px;font-size:13px;}
+.reason{margin:0 0 12px;color:var(--charcoal);}
+.confidence{color:var(--muted);font-size:12px;}
+.commit-blocks{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.commit-block{border:1px solid var(--border);border-radius:4px;padding:10px 12px;background:#fff;}
+.commit-block.empty{color:var(--muted);}
+.commit-block-title{font-weight:700;color:var(--navy);font-size:12px;margin-bottom:6px;text-transform:uppercase;}
+table.commit-meta{width:100%;font-size:12px;border-collapse:collapse;}
+table.commit-meta th{text-align:left;color:var(--muted);font-weight:600;padding:2px 8px 2px 0;vertical-align:top;white-space:nowrap;}
+table.commit-meta td{padding:2px 0;word-break:break-word;}
+.ins{color:var(--green);} .del{color:var(--red);}
+.file-list{margin-top:8px;font-size:12px;}
+.file-list ul{margin:6px 0 0;padding-left:18px;max-height:140px;overflow:auto;}
+.qa-detail{margin-top:12px;font-size:13px;background:#fff;border:1px solid var(--border);border-radius:4px;padding:10px 12px;}
+.source-tag{color:var(--muted);font-size:11px;}
+
+.badge{display:inline-block;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.02em;}
+.badge-ok{background:var(--green-bg);color:var(--green);}
+.badge-warn{background:var(--amber-bg);color:var(--amber);}
+.badge-danger{background:var(--red-bg);color:var(--red);}
+.badge-info{background:var(--blue-bg);color:var(--blue);}
+.badge-neutral{background:#eef1f6;color:var(--muted);}
+
+.risk-card{border-radius:6px;padding:16px 20px;margin-bottom:14px;border:1px solid var(--border);}
+.risk-danger{background:var(--red-bg);border-color:#f0c4c0;}
+.risk-warn{background:var(--amber-bg);border-color:#f2dfa0;}
+.risk-heading{font-weight:700;font-size:12px;letter-spacing:.03em;color:var(--red);margin-bottom:6px;}
+.risk-warn .risk-heading{color:var(--amber);}
+.risk-change-id{font-family:monospace;font-size:15px;font-weight:700;color:var(--navy);}
+.risk-desc{font-size:14px;margin:2px 0 10px;}
+.risk-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 20px;font-size:12px;margin-bottom:10px;}
+.risk-actions{font-size:12px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
+.risk-actions label{display:inline-flex;gap:4px;align-items:center;}
+
+.branch-viz{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:16px;}
+.branch-svg{width:100%;height:auto;}
+
+.qa-coverage-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:8px;}
+.qa-cov-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center;}
+.qa-cov-n{font-size:22px;font-weight:700;color:var(--navy);}
+.qa-cov-l{font-size:11px;color:var(--muted);text-transform:uppercase;}
+.qa-cov-card.ok .qa-cov-n{color:var(--green);}
+.qa-cov-card.warn .qa-cov-n{color:var(--amber);}
+.qa-cov-card.danger .qa-cov-n{color:var(--red);}
+
+table.blockers-table{width:100%;border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+table.blockers-table th{background:#eef1f6;text-align:left;padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--navy);}
+table.blockers-table td{padding:8px 12px;border-top:1px solid var(--border);}
+
+.empty-state{color:var(--muted);font-size:13px;font-style:italic;}
+.mono{font-family:monospace;}
+
+.audit-footer{margin-top:48px;border-top:2px solid var(--border);padding-top:20px;}
+.audit-dl{display:grid;grid-template-columns:180px 1fr;gap:4px 12px;font-size:12px;}
+.audit-dl dt{color:var(--muted);}
+.audit-dl dd{margin:0;font-family:monospace;color:var(--navy);word-break:break-all;}
+.disclaimer{font-size:11px;color:var(--muted);margin-top:14px;max-width:900px;}
+
+@media print{
+  body{background:#fff;}
+  .change-detail-row{display:table-row !important;}
+  .exec-header{background:#0f1b2d !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+@media (max-width:900px){
+  .kpi-row{grid-template-columns:repeat(2,1fr);}
+  .meta-grid{grid-template-columns:1fr;}
+  .commit-blocks{grid-template-columns:1fr;}
+  .qa-coverage-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="exec-header">
+    <div class="exec-title">
+      <div class="eyebrow">Release Change &amp; QA Sign-off Report</div>
+      <div class="release-flow">
+        <div class="release-box">
+          <div class="release-label">Source Release</div>
+          <div class="release-name">release/26.05</div>
+        </div>
+        <div class="release-arrow" aria-hidden="true">&#8594;</div>
+        <div class="release-box">
+          <div class="release-label">Target Release</div>
+          <div class="release-name">release/26.06</div>
+        </div>
+      </div>
+    </div>
+    <div class="status-banner status-block">RELEASE REVIEW REQUIRED</div>
+  </header>
+
+  <section class="meta-grid">
+    <div><span class="meta-k">Generated</span><span class="meta-v">2026-08-02T14:51:10+00:00</span></div>
+    <div><span class="meta-k">Repository</span><span class="meta-v">https://git.example.com/risk-platform/locate-service.git</span></div>
+    <div><span class="meta-k">Source branch</span><span class="meta-v">release/26.05 @ d997a5c9c2</span></div>
+    <div><span class="meta-k">Target branch</span><span class="meta-v">release/26.06 @ cda3024c3a</span></div>
+    <div><span class="meta-k">Common ancestor</span><span class="meta-v">f8acaa2696</span></div>
+    <div><span class="meta-k">Target HEAD</span><span class="meta-v">cda3024c3a</span></div>
+    <div><span class="meta-k">Comparison method</span><span class="meta-v">merge-base divergence + bidirectional git-patch-id pairing, cross-checked against git-cherry patch-equivalence</span></div>
+    <div><span class="meta-k">Tool version</span><span class="meta-v">release-report v1.0.0</span></div>
+    <div><span class="meta-k">QA sign-off source</span><span class="meta-v">sidecar:release-signoff-26.06.yaml@95896442143fcdd7</span></div>
+  </section>
+
+  <section class="kpi-row">
+    <div class="kpi kpi-neutral"><div class="kpi-value">9</div><div class="kpi-label">Total Changes Reviewed</div></div>
+    <div class="kpi kpi-neutral"><div class="kpi-value">3</div><div class="kpi-label">New in Target</div></div>
+    <div class="kpi kpi-neutral"><div class="kpi-value">2</div><div class="kpi-label">Carried Forward</div></div>
+    <div class="kpi kpi-danger"><div class="kpi-value">2</div><div class="kpi-label">Potentially Missing</div></div>
+    <div class="kpi kpi-neutral"><div class="kpi-value">2 / 9</div><div class="kpi-label">QA Signed Off</div></div>
+    <div class="kpi kpi-warn"><div class="kpi-value">6</div><div class="kpi-label">Awaiting QA</div></div>
+  </section>
+
+  <section class="section">
+    <h2>Regression Risk — Potentially Missing from release/26.06</h2>
+    <p class="section-note">
+      Changes present on <strong>release/26.05</strong> since the common ancestor with no
+      equivalent patch (by patch-id or git-cherry) detected on <strong>release/26.06</strong>.
+      This does not automatically mean an error — some fixes are legitimately source-release-specific —
+      but every item below requires an explicit human disposition before sign-off.
+    </p>
+    
+    <div class="risk-card risk-danger">
+      <div class="risk-heading">&#9888; POTENTIALLY MISSING FROM TARGET</div>
+      <div class="risk-change-id">RISK-1942</div>
+      <div class="risk-desc">RISK-1942 Fix position validation</div>
+      <div class="risk-meta">
+        <div><span class="meta-k">Present in</span><span class="meta-v">source release — 1cf48ba405</span></div>
+        <div><span class="meta-k">Equivalent in target</span><span class="meta-v">NOT FOUND</span></div>
+        <div><span class="meta-k">Basis</span><span class="meta-v">No equivalent patch-id found in target and &#x27;git cherry&#x27; found no corresponding change. This commit is present on the source release and appears absent from the target release -- potential regression risk.</span></div>
+      </div>
+      <div class="risk-actions">
+        Action required:
+        <label><input type="checkbox" disabled> Carry forward</label>
+        <label><input type="checkbox" disabled> Confirm not applicable</label>
+        <label><input type="checkbox" disabled> Investigate</label>
+      </div>
+    </div>
+    <div class="risk-card risk-danger">
+      <div class="risk-heading">&#9888; POTENTIALLY MISSING FROM TARGET</div>
+      <div class="risk-change-id">RISK-1955</div>
+      <div class="risk-desc">RISK-1955 Minor logging cleanup in locate service</div>
+      <div class="risk-meta">
+        <div><span class="meta-k">Present in</span><span class="meta-v">source release — d997a5c9c2</span></div>
+        <div><span class="meta-k">Equivalent in target</span><span class="meta-v">NOT FOUND</span></div>
+        <div><span class="meta-k">Basis</span><span class="meta-v">No equivalent patch-id found in target and &#x27;git cherry&#x27; found no corresponding change. This commit is present on the source release and appears absent from the target release -- potential regression risk.</span></div>
+      </div>
+      <div class="risk-actions">
+        Action required:
+        <label><input type="checkbox" disabled> Carry forward</label>
+        <label><input type="checkbox" disabled> Confirm not applicable</label>
+        <label><input type="checkbox" disabled> Investigate</label>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>What Are We Releasing? — release/26.06</h2>
+    <p class="section-note">Every relevant change since the common ancestor, classified and matched to QA status. Click a row to expand full detail.</p>
+    <table class="change-table">
+      <thead>
+        <tr>
+          <th>Change</th>
+          <th>Description</th>
+          <th>Type</th>
+          <th>Classification</th>
+          <th>QA Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+    <tr class="change-row" data-target="row-0" onclick="toggleRow('row-0')">
+      <td class="mono">RISK-1942</td>
+      <td>RISK-1942 Fix position validation</td>
+      <td>Bug Fix</td>
+      <td><span class="badge badge-danger">Potentially Missing</span></td>
+      <td><span class="badge badge-neutral">Not Reviewed</span></td>
+    </tr>
+    <tr class="change-detail-row" id="row-0">
+      <td colspan="5">
+        <div class="change-detail">
+          <p class="reason"><strong>Classification basis:</strong> No equivalent patch-id found in target and &#x27;git cherry&#x27; found no corresponding change. This commit is present on the source release and appears absent from the target release -- potential regression risk.
+             <span class="confidence">(confidence: HIGH)</span></p>
+          <div class="commit-blocks">
+            
+    <div class="commit-block">
+      <div class="commit-block-title">Source (1cf48ba405)</div>
+      <table class="commit-meta">
+        <tr><th>SHA</th><td><code>1cf48ba4057d78aa0fe04f6d0f3a5c51ef448680</code></td></tr>
+        <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
+        <tr><th>Author date</th><td>2026-08-02T14:51:09+00:00</td></tr>
+        <tr><th>Subject</th><td>RISK-1942 Fix position validation</td></tr>
+        <tr><th>PR</th><td>—</td></tr>
+        <tr><th>Files changed</th><td>1</td></tr>
+        <tr><th>Lines</th><td><span class="ins">+4</span> / <span class="del">-0</span></td></tr>
+        <tr><th>Patch-id</th><td><code>cfe086c21ea7982a</code></td></tr>
+      </table>
+      <details class="file-list"><summary>Files changed (1)</summary><ul><li>src/position.py</li></ul></details>
+    </div>
+            <div class="commit-block empty"><div class="commit-block-title">Target (—)</div><div class="commit-empty">— none —</div></div>
+          </div>
+          <div class="qa-detail">
+            <strong>QA:</strong> NOT REVIEWED
+            &nbsp;|&nbsp; Reviewer: qa-team@example.com
+            &nbsp;|&nbsp; Reviewed: —
+            <br>
+            <strong>Comments:</strong> —
+            <br>
+            <strong>Evidence:</strong> —
+            <br>
+            <span class="source-tag">QA data source: sidecar:release-signoff-26.06.yaml</span>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr class="change-row" data-target="row-1" onclick="toggleRow('row-1')">
+      <td class="mono">RISK-1955</td>
+      <td>RISK-1955 Minor logging cleanup in locate service</td>
+      <td>Chore</td>
+      <td><span class="badge badge-danger">Potentially Missing</span></td>
+      <td><span class="badge badge-neutral">Not Reviewed</span></td>
+    </tr>
+    <tr class="change-detail-row" id="row-1">
+      <td colspan="5">
+        <div class="change-detail">
+          <p class="reason"><strong>Classification basis:</strong> No equivalent patch-id found in target and &#x27;git cherry&#x27; found no corresponding change. This commit is present on the source release and appears absent from the target release -- potential regression risk.
+             <span class="confidence">(confidence: HIGH)</span></p>
+          <div class="commit-blocks">
+            
+    <div class="commit-block">
+      <div class="commit-block-title">Source (d997a5c9c2)</div>
+      <table class="commit-meta">
+        <tr><th>SHA</th><td><code>d997a5c9c2444239db64d5ce7505410bd6ed8e6c</code></td></tr>
+        <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
+        <tr><th>Author date</th><td>2026-08-02T14:51:09+00:00</td></tr>
+        <tr><th>Subject</th><td>RISK-1955 Minor logging cleanup in locate service</td></tr>
+        <tr><th>PR</th><td>—</td></tr>
+        <tr><th>Files changed</th><td>1</td></tr>
+        <tr><th>Lines</th><td><span class="ins">+3</span> / <span class="del">-0</span></td></tr>
+        <tr><th>Patch-id</th><td><code>e99ad22798a5ce42</code></td></tr>
+      </table>
+      <details class="file-list"><summary>Files changed (1)</summary><ul><li>src/locate.py</li></ul></details>
+    </div>
+            <div class="commit-block empty"><div class="commit-block-title">Target (—)</div><div class="commit-empty">— none —</div></div>
+          </div>
+          <div class="qa-detail">
+            <strong>QA:</strong> NOT REVIEWED
+            &nbsp;|&nbsp; Reviewer: —
+            &nbsp;|&nbsp; Reviewed: —
+            <br>
+            <strong>Comments:</strong> —
+            <br>
+            <strong>Evidence:</strong> —
+            <br>
+            <span class="source-tag">QA data source: none</span>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr class="change-row" data-target="row-2" onclick="toggleRow('row-2')">
+      <td class="mono">RISK-1990</td>
+      <td>Revert &quot;RISK-1990 Experimental order-routing change&quot;</td>
+      <td>Unknown</td>
+      <td><span class="badge badge-warn">Reverted</span></td>
+      <td><span class="badge badge-neutral">Not Reviewed</span></td>
+    </tr>
+    <tr class="change-detail-row" id="row-2">
+      <td colspan="5">
+        <div class="change-detail">
+          <p class="reason"><strong>Classification basis:</strong> Commit message identifies this as a revert of 5c091b7292. Could not confirm the reverted commit&#x27;s classification in this comparison; flagged for manual confirmation.
+             <span class="confidence">(confidence: MEDIUM)</span></p>
+          <div class="commit-blocks">
+            <div class="commit-block empty"><div class="commit-block-title">Source (—)</div><div class="commit-empty">— none —</div></div>
+            
+    <div class="commit-block">
+      <div class="commit-block-title">Target (cda3024c3a)</div>
+      <table class="commit-meta">
+        <tr><th>SHA</th><td><code>cda3024c3a54472f0bb78d3d033bdaf11bf77485</code></td></tr>
+        <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
+        <tr><th>Author date</th><td>2026-08-02T14:51:10+00:00</td></tr>
+        <tr><th>Subject</th><td>Revert &quot;RISK-1990 Experimental order-routing change&quot;</td></tr>
+        <tr><th>PR</th><td>—</td></tr>
+        <tr><th>Files changed</th><td>1</td></tr>
+        <tr><th>Lines</th><td><span class="ins">+0</span> / <span class="del">-2</span></td></tr>
+        <tr><th>Patch-id</th><td><code>9efe3865e1a9043b</code></td></tr>
+      </table>
+      <details class="file-list"><summary>Files changed (1)</summary><ul><li>src/routing.py</li></ul></details>
+    </div>
+          </div>
+          <div class="qa-detail">
+            <strong>QA:</strong> NOT REVIEWED
+            &nbsp;|&nbsp; Reviewer: —
+            &nbsp;|&nbsp; Reviewed: —
+            <br>
+            <strong>Comments:</strong> —
+            <br>
+            <strong>Evidence:</strong> —
+            <br>
+            <span class="source-tag">QA data source: none</span>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr class="change-row" data-target="row-3" onclick="toggleRow('row-3')">
+      <td class="mono">RISK-1903</td>
+      <td>RISK-1903 Add new locate query handling</td>
+      <td>Feature</td>
+      <td><span class="badge badge-info">New in Target</span></td>
+      <td><span class="badge badge-danger">Tested - Fail</span></td>
+    </tr>
+    <tr class="change-detail-row" id="row-3">
+      <td colspan="5">
+        <div class="change-detail">
+          <p class="reason"><strong>Classification basis:</strong> No equivalent patch-id or cherry match found on the source release. This is a change introduced specifically for the target release.
+             <span class="confidence">(confidence: HIGH)</span></p>
+          <div class="commit-blocks">
+            <div class="commit-block empty"><div class="commit-block-title">Source (—)</div><div class="commit-empty">— none —</div></div>
+            
+    <div class="commit-block">
+      <div class="commit-block-title">Target (d7d5d87c6b)</div>
+      <table class="commit-meta">
+        <tr><th>SHA</th><td><code>d7d5d87c6bdc60b17126700587d040c244d6f76a</code></td></tr>
+        <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
+        <tr><th>Author date</th><td>2026-08-02T14:51:09+00:00</td></tr>
+        <tr><th>Subject</th><td>RISK-1903 Add new locate query handling</td></tr>
+        <tr><th>PR</th><td>—</td></tr>
+        <tr><th>Files changed</th><td>1</td></tr>
+        <tr><th>Lines</th><td><span class="ins">+2</span> / <span class="del">-0</span></td></tr>
+        <tr><th>Patch-id</th><td><code>c8faffbc8ee6fdf8</code></td></tr>
+      </table>
+      <details class="file-list"><summary>Files changed (1)</summary><ul><li>src/query.py</li></ul></details>
+    </div>
+          </div>
+          <div class="qa-detail">
+            <strong>QA:</strong> TESTED - FAIL
+            &nbsp;|&nbsp; Reviewer: john.smith@example.com
+            &nbsp;|&nbsp; Reviewed: 2026-07-31T09:40:00Z
+            <br>
+            <strong>Comments:</strong> New locate query handler returns empty result set for cross-currency criteria.
+            <br>
+            <strong>Evidence:</strong> DEFECT-5521
+            <br>
+            <span class="source-tag">QA data source: sidecar:release-signoff-26.06.yaml</span>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr class="change-row" data-target="row-4" onclick="toggleRow('row-4')">
+      <td class="mono">RISK-1981</td>
+      <td>RISK-1981 Add throttling to market data feed</td>
+      <td>Feature</td>
+      <td><span class="badge badge-info">New in Target</span></td>
+      <td><span class="badge badge-neutral">Not Reviewed</span></td>
+    </tr>
+    <tr class="change-detail-row" id="row-4">
+      <td colspan="5">
+        <div class="change-detail">
+          <p class="reason"><strong>Classification basis:</strong> No equivalent patch-id or cherry match found on the source release. This is a change introduced specifically for the target release.
+             <span class="confidence">(confidence: HIGH)</span></p>
+          <div class="commit-blocks">
+            <div class="commit-block empty"><div class="commit-block-title">Source (—)</div><div class="commit-empty">— none —</div></div>
+            
+    <div class="commit-block">
+      <div class="commit-block-title">Target (a4e6504537)</div>
+      <table class="commit-meta">
+        <tr><th>SHA</th><td><code>a4e65045375032252f6ba8b38aecac389610cd01</code></td></tr>
+        <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
+        <tr><th>Author date</th><td>2026-08-02T14:51:09+00:00</td></tr>
+        <tr><th>Subject</th><td>RISK-1981 Add throttling to market data feed</td></tr>
+        <tr><th>PR</th><td>—</td></tr>
+        <tr><th>Files changed</th><td>1</td></tr>
+        <tr><th>Lines</th><td><span class="ins">+2</span> / <span class="del">-0</span></td></tr>
+        <tr><th>Patch-id</th><td><code>b928228bbdfa5316</code></td></tr>
+      </table>
+      <details class="file-list"><summary>Files changed (1)</summary><ul><li>src/throttle.py</li></ul></details>
+    </div>
+          </div>
+          <div class="qa-detail">
+            <strong>QA:</strong> NOT REVIEWED
+            &nbsp;|&nbsp; Reviewer: qa-team@example.com
+            &nbsp;|&nbsp; Reviewed: —
+            <br>
+            <strong>Comments:</strong> —
+            <br>
+            <strong>Evidence:</strong> —
+            <br>
+            <span class="source-tag">QA data source: sidecar:release-signoff-26.06.yaml</span>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr class="change-row" data-target="row-5" onclick="toggleRow('row-5')">
+      <td class="mono">RISK-1990</td>
+      <td>RISK-1990 Experimental order-routing change</td>
+      <td>Unknown</td>
+      <td><span class="badge badge-info">New in Target</span></td>
+      <td><span class="badge badge-neutral">Not Reviewed</span></td>
+    </tr>
+    <tr class="change-detail-row" id="row-5">
+      <td colspan="5">
+        <div class="change-detail">
+          <p class="reason"><strong>Classification basis:</strong> No equivalent patch-id or cherry match found on the source release. This is a change introduced specifically for the target release.
+             <span class="confidence">(confidence: HIGH)</span></p>
+          <div class="commit-blocks">
+            <div class="commit-block empty"><div class="commit-block-title">Source (—)</div><div class="commit-empty">— none —</div></div>
+            
+    <div class="commit-block">
+      <div class="commit-block-title">Target (5c091b7292)</div>
+      <table class="commit-meta">
+        <tr><th>SHA</th><td><code>5c091b7292a135cda9df4d47b7c0bd0d5b34a47a</code></td></tr>
+        <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
+        <tr><th>Author date</th><td>2026-08-02T14:51:09+00:00</td></tr>
+        <tr><th>Subject</th><td>RISK-1990 Experimental order-routing change</td></tr>
+        <tr><th>PR</th><td>—</td></tr>
+        <tr><th>Files changed</th><td>1</td></tr>
+        <tr><th>Lines</th><td><span class="ins">+2</span> / <span class="del">-0</span></td></tr>
+        <tr><th>Patch-id</th><td><code>6ecfd749dfdd378f</code></td></tr>
+      </table>
+      <details class="file-list"><summary>Files changed (1)</summary><ul><li>src/routing.py</li></ul></details>
+    </div>
+          </div>
+          <div class="qa-detail">
+            <strong>QA:</strong> NOT REVIEWED
+            &nbsp;|&nbsp; Reviewer: —
+            &nbsp;|&nbsp; Reviewed: —
+            <br>
+            <strong>Comments:</strong> —
+            <br>
+            <strong>Evidence:</strong> —
+            <br>
+            <span class="source-tag">QA data source: none</span>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr class="change-row" data-target="row-6" onclick="toggleRow('row-6')">
+      <td class="mono">RISK-1832</td>
+      <td>RISK-1832 Fix locate validation</td>
+      <td>Bug Fix</td>
+      <td><span class="badge badge-neutral">Carried Forward</span></td>
+      <td><span class="badge badge-ok">Signed Off</span></td>
+    </tr>
+    <tr class="change-detail-row" id="row-6">
+      <td colspan="5">
+        <div class="change-detail">
+          <p class="reason"><strong>Classification basis:</strong> Patch-id 9ef8534e2c01 matches target commit 0c98e49397 (git cherry corroborates).
+             <span class="confidence">(confidence: HIGH)</span></p>
+          <div class="commit-blocks">
+            
+    <div class="commit-block">
+      <div class="commit-block-title">Source (55d2c61ccc)</div>
+      <table class="commit-meta">
+        <tr><th>SHA</th><td><code>55d2c61ccc56f554850745d58604e4a7dd1734c9</code></td></tr>
+        <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
+        <tr><th>Author date</th><td>2026-08-02T14:51:09+00:00</td></tr>
+        <tr><th>Subject</th><td>RISK-1832 Fix locate validation</td></tr>
+        <tr><th>PR</th><td>—</td></tr>
+        <tr><th>Files changed</th><td>1</td></tr>
+        <tr><th>Lines</th><td><span class="ins">+4</span> / <span class="del">-0</span></td></tr>
+        <tr><th>Patch-id</th><td><code>9ef8534e2c01bcfa</code></td></tr>
+      </table>
+      <details class="file-list"><summary>Files changed (1)</summary><ul><li>src/locate.py</li></ul></details>
+    </div>
+            
+    <div class="commit-block">
+      <div class="commit-block-title">Target (0c98e49397)</div>
+      <table class="commit-meta">
+        <tr><th>SHA</th><td><code>0c98e49397a82c140e414ba10d043ad156601513</code></td></tr>
+        <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
+        <tr><th>Author date</th><td>2026-08-02T14:51:09+00:00</td></tr>
+        <tr><th>Subject</th><td>RISK-1832 Fix locate validation</td></tr>
+        <tr><th>PR</th><td>—</td></tr>
+        <tr><th>Files changed</th><td>1</td></tr>
+        <tr><th>Lines</th><td><span class="ins">+4</span> / <span class="del">-0</span></td></tr>
+        <tr><th>Patch-id</th><td><code>9ef8534e2c01bcfa</code></td></tr>
+      </table>
+      <details class="file-list"><summary>Files changed (1)</summary><ul><li>src/locate.py</li></ul></details>
+    </div>
+          </div>
+          <div class="qa-detail">
+            <strong>QA:</strong> ACCEPTED / SIGNED OFF
+            &nbsp;|&nbsp; Reviewer: jane.doe@example.com
+            &nbsp;|&nbsp; Reviewed: 2026-07-30T10:15:00Z
+            <br>
+            <strong>Comments:</strong> Verified in UAT against GC and specials locate flows. Regression pack green.
+            <br>
+            <strong>Evidence:</strong> https://testrail.example.com/runs/4821
+            <br>
+            <span class="source-tag">QA data source: sidecar:release-signoff-26.06.yaml</span>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr class="change-row" data-target="row-7" onclick="toggleRow('row-7')">
+      <td class="mono">RISK-1871</td>
+      <td>RISK-1871 Position cache correction</td>
+      <td>Unknown</td>
+      <td><span class="badge badge-neutral">Carried Forward</span></td>
+      <td><span class="badge badge-ok">Signed Off</span></td>
+    </tr>
+    <tr class="change-detail-row" id="row-7">
+      <td colspan="5">
+        <div class="change-detail">
+          <p class="reason"><strong>Classification basis:</strong> Patch-id 241390a43d2d matches target commit a65180f8ad (git cherry corroborates).
+             <span class="confidence">(confidence: HIGH)</span></p>
+          <div class="commit-blocks">
+            
+    <div class="commit-block">
+      <div class="commit-block-title">Source (2c35f541dd)</div>
+      <table class="commit-meta">
+        <tr><th>SHA</th><td><code>2c35f541dd715c885e4192cc49cdf8340fb4c1ff</code></td></tr>
+        <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
+        <tr><th>Author date</th><td>2026-08-02T14:51:09+00:00</td></tr>
+        <tr><th>Subject</th><td>RISK-1871 Position cache correction</td></tr>
+        <tr><th>PR</th><td>—</td></tr>
+        <tr><th>Files changed</th><td>1</td></tr>
+        <tr><th>Lines</th><td><span class="ins">+4</span> / <span class="del">-0</span></td></tr>
+        <tr><th>Patch-id</th><td><code>241390a43d2dd9c2</code></td></tr>
+      </table>
+      <details class="file-list"><summary>Files changed (1)</summary><ul><li>src/cache.py</li></ul></details>
+    </div>
+            
+    <div class="commit-block">
+      <div class="commit-block-title">Target (a65180f8ad)</div>
+      <table class="commit-meta">
+        <tr><th>SHA</th><td><code>a65180f8ad0ee81de7fc491df036b6731d2aa063</code></td></tr>
+        <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
+        <tr><th>Author date</th><td>2026-08-02T14:51:09+00:00</td></tr>
+        <tr><th>Subject</th><td>RISK-1871 Position cache correction</td></tr>
+        <tr><th>PR</th><td>—</td></tr>
+        <tr><th>Files changed</th><td>1</td></tr>
+        <tr><th>Lines</th><td><span class="ins">+4</span> / <span class="del">-0</span></td></tr>
+        <tr><th>Patch-id</th><td><code>241390a43d2dd9c2</code></td></tr>
+      </table>
+      <details class="file-list"><summary>Files changed (1)</summary><ul><li>src/cache.py</li></ul></details>
+    </div>
+          </div>
+          <div class="qa-detail">
+            <strong>QA:</strong> ACCEPTED / SIGNED OFF
+            &nbsp;|&nbsp; Reviewer: jane.doe@example.com
+            &nbsp;|&nbsp; Reviewed: 2026-07-30T11:02:00Z
+            <br>
+            <strong>Comments:</strong> Cache correction confirmed under load test; no stale reads observed.
+            <br>
+            <strong>Evidence:</strong> https://testrail.example.com/runs/4822
+            <br>
+            <span class="source-tag">QA data source: sidecar:release-signoff-26.06.yaml</span>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr class="change-row" data-target="row-8" onclick="toggleRow('row-8')">
+      <td class="mono">COMMIT-36e46e72a0</td>
+      <td>Release 26.06 version bump</td>
+      <td>Chore</td>
+      <td><span class="badge badge-neutral">Target-Only</span></td>
+      <td><span class="badge badge-neutral">Not Reviewed</span></td>
+    </tr>
+    <tr class="change-detail-row" id="row-8">
+      <td colspan="5">
+        <div class="change-detail">
+          <p class="reason"><strong>Classification basis:</strong> Touches only release/version/build metadata files; treated as target-only release bookkeeping rather than a functional change requiring QA test coverage.
+             <span class="confidence">(confidence: MEDIUM)</span></p>
+          <div class="commit-blocks">
+            <div class="commit-block empty"><div class="commit-block-title">Source (—)</div><div class="commit-empty">— none —</div></div>
+            
+    <div class="commit-block">
+      <div class="commit-block-title">Target (36e46e72a0)</div>
+      <table class="commit-meta">
+        <tr><th>SHA</th><td><code>36e46e72a0c4275dc7d59a12a51e02799c6621a4</code></td></tr>
+        <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
+        <tr><th>Author date</th><td>2026-08-02T14:51:09+00:00</td></tr>
+        <tr><th>Subject</th><td>Release 26.06 version bump</td></tr>
+        <tr><th>PR</th><td>—</td></tr>
+        <tr><th>Files changed</th><td>1</td></tr>
+        <tr><th>Lines</th><td><span class="ins">+1</span> / <span class="del">-1</span></td></tr>
+        <tr><th>Patch-id</th><td><code>03f887f6f1bb4c2e</code></td></tr>
+      </table>
+      <details class="file-list"><summary>Files changed (1)</summary><ul><li>pom.xml</li></ul></details>
+    </div>
+          </div>
+          <div class="qa-detail">
+            <strong>QA:</strong> NOT REVIEWED
+            &nbsp;|&nbsp; Reviewer: —
+            &nbsp;|&nbsp; Reviewed: —
+            <br>
+            <strong>Comments:</strong> —
+            <br>
+            <strong>Evidence:</strong> —
+            <br>
+            <span class="source-tag">QA data source: none</span>
+          </div>
+        </div>
+      </td>
+    </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section">
+    <h2>Branch Divergence</h2>
+    <p class="section-note">Relevant history only — divergence point through both release heads.</p>
+    <div class="branch-viz">
+    <svg viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg" class="branch-svg" role="img"
+         aria-label="Branch divergence diagram">
+      <line x1="40" y1="110" x2="230" y2="110" stroke="#5b6b82" stroke-width="2"/>
+      <circle cx="230" cy="110" r="6" fill="#1f2937"/>
+      <text x="20" y="100" font-size="12" fill="#334155">main</text>
+      <text x="205" y="135" font-size="11" fill="#64748b">common ancestor</text>
+      <text x="205" y="148" font-size="10" fill="#94a3b8" font-family="monospace">f8acaa2696</text>
+
+      <line x1="230" y1="110" x2="620" y2="55" stroke="#1a7f37" stroke-width="2"/>
+      <circle cx="620" cy="55" r="6" fill="#1a7f37"/>
+      <text x="240" y="45" font-size="12" fill="#334155">release/26.05</text>
+      <text x="630" y="59" font-size="11" fill="#1a7f37">2 carried, 2 missing</text>
+
+      <line x1="230" y1="110" x2="620" y2="170" stroke="#4b5fbd" stroke-width="2"/>
+      <circle cx="620" cy="170" r="6" fill="#4b5fbd"/>
+      <text x="240" y="195" font-size="12" fill="#334155">release/26.06</text>
+      <text x="630" y="174" font-size="11" fill="#4b5fbd">3 new in target</text>
+
+      <line x1="330" y1="86" x2="330" y2="134" stroke="#94a3b8" stroke-dasharray="3,3"/>
+      <text x="336" y="113" font-size="10" fill="#64748b">&#8596; equivalence checked via patch-id / git-cherry</text>
+    </svg></div>
+  </section>
+
+  <section class="section">
+    <h2>Needs Review — Ambiguous Classification</h2>
+    <p class="section-note">
+      Cases where Git's available signals (patch-id, git-cherry, change-id correlation) disagreed or
+      were insufficient to safely classify automatically. These are not assumptions — they are flagged
+      precisely because an unsafe assumption was avoided.
+    </p>
+    <p class="empty-state">No changes require manual classification review.</p>
+  </section>
+
+  <section class="section">
+    <h2>QA Coverage</h2>
+    <div class="qa-coverage-grid">
+      <div class="qa-cov-card"><div class="qa-cov-n">9</div><div class="qa-cov-l">Release changes</div></div>
+      <div class="qa-cov-card ok"><div class="qa-cov-n">2</div><div class="qa-cov-l">Signed off</div></div>
+      <div class="qa-cov-card warn"><div class="qa-cov-n">6</div><div class="qa-cov-l">Awaiting QA</div></div>
+      <div class="qa-cov-card danger"><div class="qa-cov-n">1</div><div class="qa-cov-l">Failed</div></div>
+      <div class="qa-cov-card"><div class="qa-cov-n">0</div><div class="qa-cov-l">Not applicable</div></div>
+    </div>
+    <h3>Release Blockers</h3>
+    <table class="blockers-table"><thead><tr><th>Change</th><th>Description</th><th>Classification</th><th>QA Status</th></tr></thead><tbody><tr><td class="mono">RISK-1942</td><td>RISK-1942 Fix position validation</td><td>Potentially Missing</td><td>Not Reviewed</td></tr><tr><td class="mono">RISK-1955</td><td>RISK-1955 Minor logging cleanup in locate service</td><td>Potentially Missing</td><td>Not Reviewed</td></tr><tr><td class="mono">RISK-1903</td><td>RISK-1903 Add new locate query handling</td><td>New in Target</td><td>Tested - Fail</td></tr></tbody></table>
+  </section>
+
+  <footer class="audit-footer">
+    <h3>Audit &amp; Methodology</h3>
+    <dl class="audit-dl">
+      <dt>Repository</dt><dd>https://git.example.com/risk-platform/locate-service.git</dd>
+      <dt>Source</dt><dd>release/26.05 @ d997a5c9c2444239db64d5ce7505410bd6ed8e6c</dd>
+      <dt>Target</dt><dd>release/26.06 @ cda3024c3a54472f0bb78d3d033bdaf11bf77485</dd>
+      <dt>Common ancestor</dt><dd>f8acaa269623bf5aef98cdd68d0764272665290f</dd>
+      <dt>Merge-base candidates</dt><dd>f8acaa2696</dd>
+      <dt>Algorithm</dt><dd>merge-base divergence + bidirectional git-patch-id pairing, cross-checked against git-cherry patch-equivalence</dd>
+      <dt>Tool version</dt><dd>1.0.0</dd>
+      <dt>Generated</dt><dd>2026-08-02T14:51:10+00:00</dd>
+      <dt>QA sign-off source</dt><dd>sidecar:release-signoff-26.06.yaml@95896442143fcdd7</dd>
+    </dl>
+    <p class="disclaimer">
+      This report is generated from read-only Git analysis (merge-base, log, diff, patch-id, cherry).
+      No repository state was modified during generation. Where Git could not safely determine a
+      change's relationship between releases, it is explicitly marked "Needs Review" rather than assumed.
+    </p>
+  </footer>
+
+</div>
+<script>
+function toggleRow(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.classList.toggle('open');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+# QA sign-off sidecar for release/26.06
+#
+# Matched to changes by `change_id` (preferred, e.g. Jira key) or by
+# `source_sha` / `target_sha` prefix as a fallback for changes without an
+# extractable change id. See README.md "QA Sign-off Workflow" for the full
+# field reference and for how this maps to persistent/audited storage later.
+
+release: release/26.06
+reviewer_default: qa-team@example.com
+
+entries:
+  - change_id: RISK-1832
+    status: SIGNED_OFF
+    reviewer: jane.doe@example.com
+    comments: "Verified in UAT against GC and specials locate flows. Regression pack green."
+    evidence_ref: "https://testrail.example.com/runs/4821"
+    reviewed_at: "2026-07-30T10:15:00Z"
+
+  - change_id: RISK-1871
+    status: SIGNED_OFF
+    reviewer: jane.doe@example.com
+    comments: "Cache correction confirmed under load test; no stale reads observed."
+    evidence_ref: "https://testrail.example.com/runs/4822"
+    reviewed_at: "2026-07-30T11:02:00Z"
+
+  - change_id: RISK-1903
+    status: TESTED_FAIL
+    reviewer: john.smith@example.com
+    comments: "New locate query handler returns empty result set for cross-currency criteria."
+    evidence_ref: "DEFECT-5521"
+    reviewed_at: "2026-07-31T09:40:00Z"
+
+  - change_id: RISK-1981
+    status: NOT_REVIEWED
+
+  # Intentionally references RISK-1942, which the tool has independently
+  # flagged as MISSING FROM TARGET. QA/release management have not yet
+  # made a disposition decision, so this stays NOT_REVIEWED -- the tool's
+  # "Potentially Missing" section, not this sidecar, is what should drive
+  # that conversation.
+  - change_id: RISK-1942
+    status: NOT_REVIEWED

@@ -1,0 +1,48 @@
+# Example: invoking release_report.py as a CI/CD pipeline stage
+#
+# This is illustrative, not a schema for any specific CI/CD orchestrator
+# (every orchestrator's actual stage syntax is environment-specific and not
+# something this tool can know about generically) -- the point is that the
+# CLI contract below (args, working directory, exit codes, output files) is
+# exactly what any CI/CD orchestrator needs to gate a release on, whether
+# that's an internal enterprise CI/CD system, Jenkins, GitLab CI, or a
+# plain shell script.
+#
+# The three things a pipeline stage needs from this tool:
+#   1. A single command to run, with no interactive prompts.
+#   2. A meaningful process exit code to gate on.
+#   3. A machine-readable artifact (release-report.json) for downstream
+#      steps (Jira comment, Slack/Teams notification, dashboard ingestion).
+
+stage: qa-release-gate
+description: Generate and gate on the Release Change & QA Sign-off Report
+working_directory: ${WORKSPACE}/repo
+command: >
+  python3 ${TOOLS_DIR}/release-report/release_report.py
+  --source ${SOURCE_RELEASE_BRANCH}
+  --target ${TARGET_RELEASE_BRANCH}
+  --signoff ${WORKSPACE}/release-signoff-${TARGET_RELEASE_VERSION}.yaml
+  --out-dir ${ARTIFACTS_DIR}
+  --github-api-url ${GHE_API_URL}
+  --github-token ${GHE_TOKEN}
+
+artifacts:
+  - ${ARTIFACTS_DIR}/release-report.html   # attach to the release ticket / archive as evidence
+  - ${ARTIFACTS_DIR}/release-report.json   # feed into notification / dashboard steps
+
+exit_code_policy:
+  0: PASS                       # READY FOR RELEASE
+  1: WARN_CONTINUE               # QA SIGN-OFF INCOMPLETE -- allow promotion to a staging gate, block prod
+  2: FAIL                        # RELEASE REVIEW REQUIRED -- block the pipeline
+  3: FAIL                        # Git / sign-off input error -- treat as a broken build
+  4: FAIL                        # Unexpected error -- treat as a broken build
+
+# Example follow-on step: post a summary to a release-management channel by
+# reading release-report.json (no need to re-run the tool):
+#
+#   summary = json.load(open("release-report.json"))
+#   post_notification(
+#       f"{summary['release_status']}: "
+#       f"{summary['summary']['qa_signed_off']}/{summary['summary']['total_changes']} signed off, "
+#       f"{summary['summary']['potentially_missing']} potentially missing"
+#   )
