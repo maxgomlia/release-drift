@@ -74,7 +74,7 @@ class TestFixAFixBScenario(unittest.TestCase):
         self.assertEqual(fix_b_entry.classification, Classification.MISSING_FROM_TARGET)
         self.assertIsNotNone(fix_b_entry.source_commit)
         self.assertIsNone(fix_b_entry.target_commit)
-        self.assertIn(fix_b_entry, comparison.blockers)
+        self.assertIn(fix_b_entry, comparison.attention_items)
 
     def test_summary_and_release_status(self):
         comparison = analyzer.analyze(
@@ -84,7 +84,7 @@ class TestFixAFixBScenario(unittest.TestCase):
         self.assertEqual(comparison.summary.total_changes, 2)
         self.assertEqual(comparison.summary.carried_forward, 1)
         self.assertEqual(comparison.summary.potentially_missing, 1)
-        # No sign-off applied and a missing change exists -> review required.
+        # A missing change exists -> review required.
         self.assertEqual(comparison.release_status, "RELEASE REVIEW REQUIRED")
 
 
@@ -166,49 +166,31 @@ class TestRevertDetection(unittest.TestCase):
         self.assertIn(Classification.REVERTED, classifications)
 
 
-class TestQaSignoffApplication(unittest.TestCase):
+class TestAttentionItemsAggregation(unittest.TestCase):
+    """attention_items should collect exactly the MISSING and NEEDS_REVIEW
+    changes -- the items someone should actually look at before releasing."""
+
     def setUp(self):
         self.repo = RepoBuilder()
         self.repo.commit("Initial", {"a.txt": "1\n"})
         base = self.repo.commit("RISK-4000 base", {"b.txt": "1\n"})
         self.repo.branch("release/26.05", base)
+        self.repo.checkout("release/26.05")
+        self.missed_fix = self.repo.commit("RISK-4010 Fix not carried over", {"x.txt": "1\n"})
         self.repo.branch("release/26.06", base)
-        self.repo.checkout("release/26.06")
-        self.repo.commit("RISK-4010 signed off change", {"x.txt": "1\n"})
         self.repo.checkout("main")
 
     def tearDown(self):
         self.repo.cleanup()
 
-    def test_signoff_sidecar_applied(self):
-        import tempfile, textwrap
-        from releaseanalyzer import signoff
-
+    def test_missing_change_appears_in_attention_items(self):
         comparison = analyzer.analyze(
             self.repo.path, "release/26.05", "release/26.06", fetch=False,
         )
-        with tempfile.NamedTemporaryFile("w", suffix=".yaml", delete=False) as f:
-            f.write(textwrap.dedent("""
-                release: release/26.06
-                entries:
-                  - change_id: RISK-4010
-                    status: SIGNED_OFF
-                    reviewer: qa.lead@example.com
-                    comments: "Verified in regression pack."
-                    evidence_ref: "TR-1"
-            """))
-            sidecar_path = f.name
-
-        source = signoff.apply_signoff(comparison.changes, sidecar_path)
         analyzer.summarize(comparison)
-
-        entry = next(c for c in comparison.changes if c.change_id == "RISK-4010")
-        from releaseanalyzer.models import QaState
-        self.assertEqual(entry.qa.status, QaState.SIGNED_OFF)
-        self.assertEqual(entry.qa.reviewer, "qa.lead@example.com")
-        self.assertTrue(source.startswith("sidecar:"))
-        self.assertEqual(comparison.summary.qa_signed_off, 1)
-        self.assertEqual(comparison.release_status, "READY FOR RELEASE")
+        attention_ids = [c.change_id for c in comparison.attention_items]
+        self.assertIn("RISK-4010", attention_ids)
+        self.assertEqual(comparison.release_status, "RELEASE REVIEW REQUIRED")
 
 
 if __name__ == "__main__":

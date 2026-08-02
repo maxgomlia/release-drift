@@ -6,7 +6,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from releaseanalyzer import git_ops, report_html
 from releaseanalyzer.models import (
-    ChangeEntry, Classification, Commit, Confidence, QaStatus, QaState,
+    ChangeEntry, Classification, Commit, Confidence,
     RunMetadata, SummaryCounts, ReleaseComparison,
 )
 from tests.repo_builder import RepoBuilder
@@ -84,18 +84,17 @@ class TestHtmlRendererDoesNotCrash(unittest.TestCase):
             change_id="RISK-1832", description="Fix locate validation", change_type="Bug Fix",
             classification=Classification.CARRIED_FORWARD, classification_confidence=Confidence.HIGH,
             classification_reason="patch-id match", source_commit=commit, target_commit=commit,
-            qa=QaStatus(status=QaState.SIGNED_OFF, reviewer="qa@example.com"),
         )
         comparison = ReleaseComparison(
             metadata=RunMetadata(
-                repository="git@example.com:bank/repo.git", source_branch="release/26.05",
+                repository="git@example.com:risk-platform/repo.git", source_branch="release/26.05",
                 target_branch="release/26.06", source_sha="a" * 40, target_sha="b" * 40,
                 merge_base_sha="c" * 40, merge_base_candidates=["c" * 40],
-                generated_at="2026-08-02T00:00:00+00:00", tool_version="1.0.0",
-                comparison_algorithm="merge-base + patch-id + git-cherry", signoff_source="none",
+                generated_at="2026-08-02T00:00:00+00:00", tool_version="2.0.0",
+                comparison_algorithm="merge-base + patch-id + git-cherry",
             ),
-            changes=[entry], summary=SummaryCounts(total_changes=1, carried_forward=1, qa_signed_off=1),
-            blockers=[], release_status="READY FOR RELEASE",
+            changes=[entry], summary=SummaryCounts(total_changes=1, carried_forward=1),
+            attention_items=[], release_status="READY FOR RELEASE",
         )
         html = report_html.render(comparison)
         self.assertIn("RELEASE CHANGE", html.upper())

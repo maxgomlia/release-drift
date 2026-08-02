@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 
 from . import git_ops
 from .models import (
-    ChangeEntry, Classification, Commit, Confidence, QaStatus, RunMetadata,
+    ChangeEntry, Classification, Commit, Confidence, RunMetadata,
     SummaryCounts, ReleaseComparison, TOOL_VERSION,
 )
 
@@ -246,7 +246,7 @@ def analyze(
                 None, tc, Classification.TARGET_ONLY, Confidence.MEDIUM,
                 "Touches only release/version/build metadata files; treated "
                 "as target-only release bookkeeping rather than a functional "
-                "change requiring QA test coverage.",
+                "change.",
             ))
             continue
 
@@ -273,14 +273,13 @@ def analyze(
             "merge-base divergence + bidirectional git-patch-id pairing, "
             "cross-checked against git-cherry patch-equivalence"
         ),
-        signoff_source="none",
     )
 
     comparison = ReleaseComparison(
         metadata=metadata,
         changes=changes,
         summary=SummaryCounts(),  # filled in by summarize()
-        blockers=[],
+        attention_items=[],
         release_status="RELEASE REVIEW REQUIRED",
     )
     return comparison
@@ -307,7 +306,6 @@ def _build_entry(
         target_commit=target_commit,
         related_commits=[],
         merge_commit=anchor.is_merge,
-        qa=QaStatus(),
     )
 
 
@@ -319,15 +317,14 @@ def _sort_key(entry: ChangeEntry):
         Classification.NEW_IN_TARGET: 3,
         Classification.CARRIED_FORWARD: 4,
         Classification.TARGET_ONLY: 5,
-        Classification.NOT_APPLICABLE: 6,
     }
     return (order.get(entry.classification, 9), entry.change_id)
 
 
 def summarize(comparison: ReleaseComparison) -> None:
-    """Populate summary counts, blockers, and release_status in place."""
+    """Populate summary counts, attention_items, and release_status in place."""
     s = SummaryCounts()
-    blockers: list[ChangeEntry] = []
+    attention_items: list[ChangeEntry] = []
 
     for c in comparison.changes:
         s.total_changes += 1
@@ -337,39 +334,19 @@ def summarize(comparison: ReleaseComparison) -> None:
             s.carried_forward += 1
         elif c.classification == Classification.MISSING_FROM_TARGET:
             s.potentially_missing += 1
+            attention_items.append(c)
         elif c.classification == Classification.TARGET_ONLY:
             s.target_only += 1
         elif c.classification == Classification.REVERTED:
             s.reverted += 1
         elif c.classification == Classification.NEEDS_REVIEW:
             s.needs_review += 1
-        elif c.classification == Classification.NOT_APPLICABLE:
-            s.not_applicable += 1
-
-        from .models import QaState
-        if c.qa.status == QaState.SIGNED_OFF:
-            s.qa_signed_off += 1
-        elif c.qa.status == QaState.TESTED_FAIL:
-            s.qa_failed += 1
-            blockers.append(c)
-        elif c.qa.status == QaState.NOT_APPLICABLE:
-            s.qa_not_applicable += 1
-        else:
-            s.qa_awaiting += 1
-
-        if c.classification == Classification.MISSING_FROM_TARGET:
-            if c not in blockers:
-                blockers.append(c)
-        if c.classification == Classification.NEEDS_REVIEW:
-            if c not in blockers:
-                blockers.append(c)
+            attention_items.append(c)
 
     comparison.summary = s
-    comparison.blockers = blockers
+    comparison.attention_items = attention_items
 
-    if s.qa_failed > 0 or s.potentially_missing > 0 or s.needs_review > 0:
+    if s.potentially_missing > 0 or s.needs_review > 0:
         comparison.release_status = "RELEASE REVIEW REQUIRED"
-    elif s.qa_awaiting > 0:
-        comparison.release_status = "QA SIGN-OFF INCOMPLETE"
     else:
         comparison.release_status = "READY FOR RELEASE"

@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Release Change & QA Sign-off Report — CLI entry point.
+"""Release Change Report — CLI entry point.
 
 Usage:
     python release_report.py --source release/26.05 --target release/26.06
 
 Runs entirely against a local Git repository (defaults to the current
 working directory). Read-only: fetches (optional) then only reads history.
+
+Zero external dependencies -- everything here is Python standard library.
 """
 from __future__ import annotations
 
@@ -14,21 +16,22 @@ import logging
 import sys
 from pathlib import Path
 
-from releaseanalyzer import analyzer, report_html, report_json, signoff
+from releaseanalyzer import analyzer, report_html, report_json
 from releaseanalyzer.models import TOOL_VERSION
 
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="release_report.py",
-        description="Generate a Release Change & QA Sign-off Report comparing two release branches.",
+        description="Generate a Release Change Report comparing two release branches: "
+                     "what's being released, and what may have been missed from the "
+                     "previous release.",
     )
     p.add_argument("--source", required=True, help="Source (previous) release branch, e.g. release/26.05")
     p.add_argument("--target", required=True, help="Target (new) release branch, e.g. release/26.06")
     p.add_argument("--repo", default=".", help="Path to the Git repository (default: current directory)")
     p.add_argument("--remote", default="origin", help="Git remote to fetch from (default: origin)")
     p.add_argument("--no-fetch", action="store_true", help="Skip 'git fetch' and use local refs as-is")
-    p.add_argument("--signoff", default=None, help="Path to QA sign-off sidecar (YAML or JSON)")
     p.add_argument(
         "--github-api-url", default=None,
         help="Optional: GitHub Enterprise API base URL (e.g. https://ghe.example.com/api/v3) "
@@ -69,7 +72,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.github_api_url:
             if not args.github_token:
                 log.error("--github-api-url was set but --github-token was not provided")
-                return 3
+                return 2
             from releaseanalyzer import github_api
             owner, repo = args.github_owner, args.github_repo
             if not (owner and repo):
@@ -82,10 +85,6 @@ def main(argv: list[str] | None = None) -> int:
                 )
             else:
                 log.warning("Could not determine owner/repo for PR enrichment; skipping (pass --github-owner/--github-repo)")
-
-        if args.signoff:
-            log.info("Applying QA sign-off from %s", args.signoff)
-            comparison.metadata.signoff_source = signoff.apply_signoff(comparison.changes, args.signoff)
 
         analyzer.summarize(comparison)
 
@@ -103,31 +102,28 @@ def main(argv: list[str] | None = None) -> int:
             log.info("Wrote %s", json_path)
 
         log.info(
-            "Release status: %s | total=%d new=%d carried=%d missing=%d needs_review=%d "
-            "qa_signed_off=%d qa_awaiting=%d qa_failed=%d",
+            "Release status: %s | total=%d new=%d carried=%d missing=%d "
+            "target_only=%d reverted=%d needs_review=%d",
             comparison.release_status,
             comparison.summary.total_changes,
             comparison.summary.new_in_target,
             comparison.summary.carried_forward,
             comparison.summary.potentially_missing,
+            comparison.summary.target_only,
+            comparison.summary.reverted,
             comparison.summary.needs_review,
-            comparison.summary.qa_signed_off,
-            comparison.summary.qa_awaiting,
-            comparison.summary.qa_failed,
         )
 
         if comparison.release_status == "RELEASE REVIEW REQUIRED":
-            return 2   # distinct exit code for pipeline gating: review required
-        if comparison.release_status == "QA SIGN-OFF INCOMPLETE":
-            return 1   # gate: incomplete
+            return 1   # distinct exit code for pipeline gating: missing/ambiguous changes found
         return 0
 
-    except (analyzer.git_ops.GitError, signoff.SignoffError) as exc:
+    except analyzer.git_ops.GitError as exc:
         log.error(str(exc))
-        return 3
+        return 2
     except Exception:
         log.exception("Unexpected error generating release report")
-        return 4
+        return 3
 
 
 if __name__ == "__main__":

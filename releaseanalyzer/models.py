@@ -1,8 +1,8 @@
-"""Typed data structures for the Release Change & QA Sign-off Report.
+"""Typed data structures for the Release Change Report.
 
-These are intentionally plain dataclasses (no ORM / pydantic dependency)
-so the tool has zero non-stdlib runtime requirements beyond PyYAML for the
-sign-off sidecar. Everything here is JSON-serialisable via `asdict()`.
+These are intentionally plain dataclasses (no ORM / pydantic dependency),
+and the whole tool has zero non-stdlib runtime requirements. Everything
+here is JSON-serialisable via `asdict()`.
 """
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from enum import Enum
 from typing import Optional
 
 
-TOOL_VERSION = "1.0.0"
+TOOL_VERSION = "2.0.0"
 
 
 class Classification(str, Enum):
@@ -21,15 +21,6 @@ class Classification(str, Enum):
     TARGET_ONLY = "TARGET-ONLY CHANGE"
     REVERTED = "REVERTED"
     NEEDS_REVIEW = "NEEDS REVIEW"
-    NOT_APPLICABLE = "INTENTIONALLY NOT APPLICABLE"
-
-
-class QaState(str, Enum):
-    NOT_REVIEWED = "NOT REVIEWED"
-    TESTED_PASS = "TESTED - PASS"
-    TESTED_FAIL = "TESTED - FAIL"
-    NOT_APPLICABLE = "NOT APPLICABLE"
-    SIGNED_OFF = "ACCEPTED / SIGNED OFF"
 
 
 class Confidence(str, Enum):
@@ -69,21 +60,6 @@ class Commit:
 
 
 @dataclass
-class QaStatus:
-    status: QaState = QaState.NOT_REVIEWED
-    reviewer: Optional[str] = None
-    comments: Optional[str] = None
-    evidence_ref: Optional[str] = None
-    reviewed_at: Optional[str] = None
-    source: str = "none"   # e.g. "sidecar:release-signoff-26.06.yaml"
-
-    def to_dict(self) -> dict:
-        d = asdict(self)
-        d["status"] = self.status.value
-        return d
-
-
-@dataclass
 class ChangeEntry:
     change_id: str                       # Jira ID, or synthetic "COMMIT-<short_sha>"
     description: str
@@ -95,7 +71,6 @@ class ChangeEntry:
     target_commit: Optional[Commit] = None
     related_commits: list[Commit] = field(default_factory=list)
     merge_commit: bool = False
-    qa: QaStatus = field(default_factory=QaStatus)
 
     def to_dict(self) -> dict:
         return {
@@ -109,7 +84,6 @@ class ChangeEntry:
             "target_commit": self.target_commit.to_dict() if self.target_commit else None,
             "related_commits": [c.to_dict() for c in self.related_commits],
             "merge_commit": self.merge_commit,
-            "qa": self.qa.to_dict(),
         }
 
 
@@ -125,7 +99,6 @@ class RunMetadata:
     generated_at: str
     tool_version: str
     comparison_algorithm: str
-    signoff_source: str
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -140,11 +113,6 @@ class SummaryCounts:
     target_only: int = 0
     reverted: int = 0
     needs_review: int = 0
-    not_applicable: int = 0
-    qa_signed_off: int = 0
-    qa_awaiting: int = 0
-    qa_failed: int = 0
-    qa_not_applicable: int = 0
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -155,8 +123,8 @@ class ReleaseComparison:
     metadata: RunMetadata
     changes: list[ChangeEntry]
     summary: SummaryCounts
-    blockers: list[ChangeEntry]
-    release_status: str   # READY FOR RELEASE / QA SIGN-OFF INCOMPLETE / RELEASE REVIEW REQUIRED
+    attention_items: list[ChangeEntry]   # MISSING_FROM_TARGET + NEEDS_REVIEW, for quick reference
+    release_status: str   # READY FOR RELEASE / RELEASE REVIEW REQUIRED
 
     def to_dict(self) -> dict:
         return {
@@ -164,5 +132,5 @@ class ReleaseComparison:
             "summary": self.summary.to_dict(),
             "release_status": self.release_status,
             "changes": [c.to_dict() for c in self.changes],
-            "blockers": [c.to_dict() for c in self.blockers],
+            "attention_items": [c.to_dict() for c in self.attention_items],
         }

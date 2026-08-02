@@ -12,16 +12,15 @@
 #   1. A single command to run, with no interactive prompts.
 #   2. A meaningful process exit code to gate on.
 #   3. A machine-readable artifact (release-report.json) for downstream
-#      steps (Jira comment, Slack/Teams notification, dashboard ingestion).
+#      steps (Slack/Teams notification, dashboard ingestion).
 
-stage: qa-release-gate
-description: Generate and gate on the Release Change & QA Sign-off Report
+stage: release-diff-check
+description: Generate and gate on the Release Change Report
 working_directory: ${WORKSPACE}/repo
 command: >
   python3 ${TOOLS_DIR}/release-report/release_report.py
   --source ${SOURCE_RELEASE_BRANCH}
   --target ${TARGET_RELEASE_BRANCH}
-  --signoff ${WORKSPACE}/release-signoff-${TARGET_RELEASE_VERSION}.yaml
   --out-dir ${ARTIFACTS_DIR}
   --github-api-url ${GHE_API_URL}
   --github-token ${GHE_TOKEN}
@@ -31,11 +30,10 @@ artifacts:
   - ${ARTIFACTS_DIR}/release-report.json   # feed into notification / dashboard steps
 
 exit_code_policy:
-  0: PASS                       # READY FOR RELEASE
-  1: WARN_CONTINUE               # QA SIGN-OFF INCOMPLETE -- allow promotion to a staging gate, block prod
-  2: FAIL                        # RELEASE REVIEW REQUIRED -- block the pipeline
-  3: FAIL                        # Git / sign-off input error -- treat as a broken build
-  4: FAIL                        # Unexpected error -- treat as a broken build
+  0: PASS                        # READY FOR RELEASE -- no missing changes, nothing ambiguous
+  1: FAIL                        # RELEASE REVIEW REQUIRED -- missing/ambiguous changes found, block the pipeline
+  2: FAIL                        # Git / input error -- treat as a broken build
+  3: FAIL                        # Unexpected error -- treat as a broken build
 
 # Example follow-on step: post a summary to a release-management channel by
 # reading release-report.json (no need to re-run the tool):
@@ -43,6 +41,6 @@ exit_code_policy:
 #   summary = json.load(open("release-report.json"))
 #   post_notification(
 #       f"{summary['release_status']}: "
-#       f"{summary['summary']['qa_signed_off']}/{summary['summary']['total_changes']} signed off, "
-#       f"{summary['summary']['potentially_missing']} potentially missing"
+#       f"{summary['summary']['potentially_missing']} potentially missing, "
+#       f"{summary['summary']['needs_review']} need review"
 #   )

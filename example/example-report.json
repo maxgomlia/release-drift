@@ -1,5 +1,5 @@
 {
-  "blockers": [
+  "attention_items": [
     {
       "change_id": "RISK-1942",
       "change_type": "Bug Fix",
@@ -8,22 +8,14 @@
       "classification_reason": "No equivalent patch-id found in target and 'git cherry' found no corresponding change. This commit is present on the source release and appears absent from the target release -- potential regression risk.",
       "description": "RISK-1942 Fix position validation",
       "merge_commit": false,
-      "qa": {
-        "comments": null,
-        "evidence_ref": null,
-        "reviewed_at": null,
-        "reviewer": "qa-team@example.com",
-        "source": "sidecar:release-signoff-26.06.yaml",
-        "status": "NOT REVIEWED"
-      },
       "related_commits": [],
       "source_commit": {
-        "author_date": "2026-08-02T14:51:09+00:00",
+        "author_date": "2026-08-02T15:24:15+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1942",
-        "committer_date": "2026-08-02T14:51:09+00:00",
+        "committer_date": "2026-08-02T15:24:15+00:00",
         "deletions": 0,
         "files_changed": [
           "src/position.py"
@@ -35,8 +27,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "1cf48ba4057d78aa0fe04f6d0f3a5c51ef448680",
-        "short_sha": "1cf48ba405",
+        "sha": "5aadab679a87d9e995e4305724aa053b8177e313",
+        "short_sha": "5aadab679a",
         "subject": "RISK-1942 Fix position validation"
       },
       "target_commit": null
@@ -49,22 +41,14 @@
       "classification_reason": "No equivalent patch-id found in target and 'git cherry' found no corresponding change. This commit is present on the source release and appears absent from the target release -- potential regression risk.",
       "description": "RISK-1955 Minor logging cleanup in locate service",
       "merge_commit": false,
-      "qa": {
-        "comments": null,
-        "evidence_ref": null,
-        "reviewed_at": null,
-        "reviewer": null,
-        "source": "none",
-        "status": "NOT REVIEWED"
-      },
       "related_commits": [],
       "source_commit": {
-        "author_date": "2026-08-02T14:51:09+00:00",
+        "author_date": "2026-08-02T15:24:15+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1955",
-        "committer_date": "2026-08-02T14:51:09+00:00",
+        "committer_date": "2026-08-02T15:24:15+00:00",
         "deletions": 0,
         "files_changed": [
           "src/locate.py"
@@ -76,52 +60,11 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "d997a5c9c2444239db64d5ce7505410bd6ed8e6c",
-        "short_sha": "d997a5c9c2",
+        "sha": "71e7471a3602ad6638e1d01d551942faa8dd7089",
+        "short_sha": "71e7471a36",
         "subject": "RISK-1955 Minor logging cleanup in locate service"
       },
       "target_commit": null
-    },
-    {
-      "change_id": "RISK-1903",
-      "change_type": "Feature",
-      "classification": "NEW IN TARGET RELEASE",
-      "classification_confidence": "HIGH",
-      "classification_reason": "No equivalent patch-id or cherry match found on the source release. This is a change introduced specifically for the target release.",
-      "description": "RISK-1903 Add new locate query handling",
-      "merge_commit": false,
-      "qa": {
-        "comments": "New locate query handler returns empty result set for cross-currency criteria.",
-        "evidence_ref": "DEFECT-5521",
-        "reviewed_at": "2026-07-31T09:40:00Z",
-        "reviewer": "john.smith@example.com",
-        "source": "sidecar:release-signoff-26.06.yaml",
-        "status": "TESTED - FAIL"
-      },
-      "related_commits": [],
-      "source_commit": null,
-      "target_commit": {
-        "author_date": "2026-08-02T14:51:09+00:00",
-        "author_email": "platform-eng@example.com",
-        "author_name": "Platform Engineering",
-        "body": "",
-        "change_id": "RISK-1903",
-        "committer_date": "2026-08-02T14:51:09+00:00",
-        "deletions": 0,
-        "files_changed": [
-          "src/query.py"
-        ],
-        "insertions": 2,
-        "is_merge": false,
-        "patch_id": "c8faffbc8ee6fdf840fee771b8b070a0bd3584b5",
-        "pr_reference": null,
-        "pr_state": null,
-        "pr_title": null,
-        "pr_url": null,
-        "sha": "d7d5d87c6bdc60b17126700587d040c244d6f76a",
-        "short_sha": "d7d5d87c6b",
-        "subject": "RISK-1903 Add new locate query handling"
-      }
     }
   ],
   "changes": [
@@ -133,22 +76,14 @@
       "classification_reason": "No equivalent patch-id found in target and 'git cherry' found no corresponding change. This commit is present on the source release and appears absent from the target release -- potential regression risk.",
       "description": "RISK-1942 Fix position validation",
       "merge_commit": false,
-      "qa": {
-        "comments": null,
-        "evidence_ref": null,
-        "reviewed_at": null,
-        "reviewer": "qa-team@example.com",
-        "source": "sidecar:release-signoff-26.06.yaml",
-        "status": "NOT REVIEWED"
-      },
       "related_commits": [],
       "source_commit": {
-        "author_date": "2026-08-02T14:51:09+00:00",
+        "author_date": "2026-08-02T15:24:15+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1942",
-        "committer_date": "2026-08-02T14:51:09+00:00",
+        "committer_date": "2026-08-02T15:24:15+00:00",
         "deletions": 0,
         "files_changed": [
           "src/position.py"
@@ -160,8 +95,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "1cf48ba4057d78aa0fe04f6d0f3a5c51ef448680",
-        "short_sha": "1cf48ba405",
+        "sha": "5aadab679a87d9e995e4305724aa053b8177e313",
+        "short_sha": "5aadab679a",
         "subject": "RISK-1942 Fix position validation"
       },
       "target_commit": null
@@ -174,22 +109,14 @@
       "classification_reason": "No equivalent patch-id found in target and 'git cherry' found no corresponding change. This commit is present on the source release and appears absent from the target release -- potential regression risk.",
       "description": "RISK-1955 Minor logging cleanup in locate service",
       "merge_commit": false,
-      "qa": {
-        "comments": null,
-        "evidence_ref": null,
-        "reviewed_at": null,
-        "reviewer": null,
-        "source": "none",
-        "status": "NOT REVIEWED"
-      },
       "related_commits": [],
       "source_commit": {
-        "author_date": "2026-08-02T14:51:09+00:00",
+        "author_date": "2026-08-02T15:24:15+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1955",
-        "committer_date": "2026-08-02T14:51:09+00:00",
+        "committer_date": "2026-08-02T15:24:15+00:00",
         "deletions": 0,
         "files_changed": [
           "src/locate.py"
@@ -201,8 +128,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "d997a5c9c2444239db64d5ce7505410bd6ed8e6c",
-        "short_sha": "d997a5c9c2",
+        "sha": "71e7471a3602ad6638e1d01d551942faa8dd7089",
+        "short_sha": "71e7471a36",
         "subject": "RISK-1955 Minor logging cleanup in locate service"
       },
       "target_commit": null
@@ -212,26 +139,18 @@
       "change_type": "Unknown",
       "classification": "REVERTED",
       "classification_confidence": "MEDIUM",
-      "classification_reason": "Commit message identifies this as a revert of 5c091b7292. Could not confirm the reverted commit's classification in this comparison; flagged for manual confirmation.",
+      "classification_reason": "Commit message identifies this as a revert of 5cc5997d80. Could not confirm the reverted commit's classification in this comparison; flagged for manual confirmation.",
       "description": "Revert \"RISK-1990 Experimental order-routing change\"",
       "merge_commit": false,
-      "qa": {
-        "comments": null,
-        "evidence_ref": null,
-        "reviewed_at": null,
-        "reviewer": null,
-        "source": "none",
-        "status": "NOT REVIEWED"
-      },
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T14:51:10+00:00",
+        "author_date": "2026-08-02T15:24:15+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
-        "body": "This reverts commit 5c091b7292a135cda9df4d47b7c0bd0d5b34a47a.",
+        "body": "This reverts commit 5cc5997d80eb3c7dce3b88f011d3917b0a59532d.",
         "change_id": "RISK-1990",
-        "committer_date": "2026-08-02T14:51:10+00:00",
+        "committer_date": "2026-08-02T15:24:15+00:00",
         "deletions": 2,
         "files_changed": [
           "src/routing.py"
@@ -243,8 +162,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "cda3024c3a54472f0bb78d3d033bdaf11bf77485",
-        "short_sha": "cda3024c3a",
+        "sha": "20fb8c1fb53e4fe7088d97ed877c5e4a0c1ba8ca",
+        "short_sha": "20fb8c1fb5",
         "subject": "Revert \"RISK-1990 Experimental order-routing change\""
       }
     },
@@ -256,23 +175,15 @@
       "classification_reason": "No equivalent patch-id or cherry match found on the source release. This is a change introduced specifically for the target release.",
       "description": "RISK-1903 Add new locate query handling",
       "merge_commit": false,
-      "qa": {
-        "comments": "New locate query handler returns empty result set for cross-currency criteria.",
-        "evidence_ref": "DEFECT-5521",
-        "reviewed_at": "2026-07-31T09:40:00Z",
-        "reviewer": "john.smith@example.com",
-        "source": "sidecar:release-signoff-26.06.yaml",
-        "status": "TESTED - FAIL"
-      },
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T14:51:09+00:00",
+        "author_date": "2026-08-02T15:24:15+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1903",
-        "committer_date": "2026-08-02T14:51:09+00:00",
+        "committer_date": "2026-08-02T15:24:15+00:00",
         "deletions": 0,
         "files_changed": [
           "src/query.py"
@@ -284,8 +195,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "d7d5d87c6bdc60b17126700587d040c244d6f76a",
-        "short_sha": "d7d5d87c6b",
+        "sha": "c022b861c2e5629e762b7171176d5e6b36b39d81",
+        "short_sha": "c022b861c2",
         "subject": "RISK-1903 Add new locate query handling"
       }
     },
@@ -297,23 +208,15 @@
       "classification_reason": "No equivalent patch-id or cherry match found on the source release. This is a change introduced specifically for the target release.",
       "description": "RISK-1981 Add throttling to market data feed",
       "merge_commit": false,
-      "qa": {
-        "comments": null,
-        "evidence_ref": null,
-        "reviewed_at": null,
-        "reviewer": "qa-team@example.com",
-        "source": "sidecar:release-signoff-26.06.yaml",
-        "status": "NOT REVIEWED"
-      },
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T14:51:09+00:00",
+        "author_date": "2026-08-02T15:24:15+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1981",
-        "committer_date": "2026-08-02T14:51:09+00:00",
+        "committer_date": "2026-08-02T15:24:15+00:00",
         "deletions": 0,
         "files_changed": [
           "src/throttle.py"
@@ -325,8 +228,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "a4e65045375032252f6ba8b38aecac389610cd01",
-        "short_sha": "a4e6504537",
+        "sha": "9858d7f0a51996628be593e604fd0a49bd4d6107",
+        "short_sha": "9858d7f0a5",
         "subject": "RISK-1981 Add throttling to market data feed"
       }
     },
@@ -338,23 +241,15 @@
       "classification_reason": "No equivalent patch-id or cherry match found on the source release. This is a change introduced specifically for the target release.",
       "description": "RISK-1990 Experimental order-routing change",
       "merge_commit": false,
-      "qa": {
-        "comments": null,
-        "evidence_ref": null,
-        "reviewed_at": null,
-        "reviewer": null,
-        "source": "none",
-        "status": "NOT REVIEWED"
-      },
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T14:51:09+00:00",
+        "author_date": "2026-08-02T15:24:15+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1990",
-        "committer_date": "2026-08-02T14:51:09+00:00",
+        "committer_date": "2026-08-02T15:24:15+00:00",
         "deletions": 0,
         "files_changed": [
           "src/routing.py"
@@ -366,8 +261,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "5c091b7292a135cda9df4d47b7c0bd0d5b34a47a",
-        "short_sha": "5c091b7292",
+        "sha": "5cc5997d80eb3c7dce3b88f011d3917b0a59532d",
+        "short_sha": "5cc5997d80",
         "subject": "RISK-1990 Experimental order-routing change"
       }
     },
@@ -376,25 +271,17 @@
       "change_type": "Bug Fix",
       "classification": "CARRIED FORWARD",
       "classification_confidence": "HIGH",
-      "classification_reason": "Patch-id 9ef8534e2c01 matches target commit 0c98e49397 (git cherry corroborates).",
+      "classification_reason": "Patch-id 9ef8534e2c01 matches target commit e9007e6874 (git cherry corroborates).",
       "description": "RISK-1832 Fix locate validation",
       "merge_commit": false,
-      "qa": {
-        "comments": "Verified in UAT against GC and specials locate flows. Regression pack green.",
-        "evidence_ref": "https://testrail.example.com/runs/4821",
-        "reviewed_at": "2026-07-30T10:15:00Z",
-        "reviewer": "jane.doe@example.com",
-        "source": "sidecar:release-signoff-26.06.yaml",
-        "status": "ACCEPTED / SIGNED OFF"
-      },
       "related_commits": [],
       "source_commit": {
-        "author_date": "2026-08-02T14:51:09+00:00",
+        "author_date": "2026-08-02T15:24:15+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1832",
-        "committer_date": "2026-08-02T14:51:09+00:00",
+        "committer_date": "2026-08-02T15:24:15+00:00",
         "deletions": 0,
         "files_changed": [
           "src/locate.py"
@@ -406,17 +293,17 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "55d2c61ccc56f554850745d58604e4a7dd1734c9",
-        "short_sha": "55d2c61ccc",
+        "sha": "0f7ebcaf6b481b78042666a080ca9e5d208ed582",
+        "short_sha": "0f7ebcaf6b",
         "subject": "RISK-1832 Fix locate validation"
       },
       "target_commit": {
-        "author_date": "2026-08-02T14:51:09+00:00",
+        "author_date": "2026-08-02T15:24:15+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
-        "body": "(cherry picked from commit 55d2c61ccc56f554850745d58604e4a7dd1734c9)",
+        "body": "(cherry picked from commit 0f7ebcaf6b481b78042666a080ca9e5d208ed582)",
         "change_id": "RISK-1832",
-        "committer_date": "2026-08-02T14:51:09+00:00",
+        "committer_date": "2026-08-02T15:24:15+00:00",
         "deletions": 0,
         "files_changed": [
           "src/locate.py"
@@ -428,8 +315,8 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "0c98e49397a82c140e414ba10d043ad156601513",
-        "short_sha": "0c98e49397",
+        "sha": "e9007e6874bd1bd80b043da0575b055ea076bf8c",
+        "short_sha": "e9007e6874",
         "subject": "RISK-1832 Fix locate validation"
       }
     },
@@ -438,25 +325,17 @@
       "change_type": "Unknown",
       "classification": "CARRIED FORWARD",
       "classification_confidence": "HIGH",
-      "classification_reason": "Patch-id 241390a43d2d matches target commit a65180f8ad (git cherry corroborates).",
+      "classification_reason": "Patch-id 241390a43d2d matches target commit 59a4016d91 (git cherry corroborates).",
       "description": "RISK-1871 Position cache correction",
       "merge_commit": false,
-      "qa": {
-        "comments": "Cache correction confirmed under load test; no stale reads observed.",
-        "evidence_ref": "https://testrail.example.com/runs/4822",
-        "reviewed_at": "2026-07-30T11:02:00Z",
-        "reviewer": "jane.doe@example.com",
-        "source": "sidecar:release-signoff-26.06.yaml",
-        "status": "ACCEPTED / SIGNED OFF"
-      },
       "related_commits": [],
       "source_commit": {
-        "author_date": "2026-08-02T14:51:09+00:00",
+        "author_date": "2026-08-02T15:24:15+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1871",
-        "committer_date": "2026-08-02T14:51:09+00:00",
+        "committer_date": "2026-08-02T15:24:15+00:00",
         "deletions": 0,
         "files_changed": [
           "src/cache.py"
@@ -468,17 +347,17 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "2c35f541dd715c885e4192cc49cdf8340fb4c1ff",
-        "short_sha": "2c35f541dd",
+        "sha": "6e8110967a3df0d6c513bab4562152efd11de75c",
+        "short_sha": "6e8110967a",
         "subject": "RISK-1871 Position cache correction"
       },
       "target_commit": {
-        "author_date": "2026-08-02T14:51:09+00:00",
+        "author_date": "2026-08-02T15:24:15+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
-        "body": "(cherry picked from commit 2c35f541dd715c885e4192cc49cdf8340fb4c1ff)",
+        "body": "(cherry picked from commit 6e8110967a3df0d6c513bab4562152efd11de75c)",
         "change_id": "RISK-1871",
-        "committer_date": "2026-08-02T14:51:09+00:00",
+        "committer_date": "2026-08-02T15:24:15+00:00",
         "deletions": 0,
         "files_changed": [
           "src/cache.py"
@@ -490,36 +369,28 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "a65180f8ad0ee81de7fc491df036b6731d2aa063",
-        "short_sha": "a65180f8ad",
+        "sha": "59a4016d918c74c51c50e6e07c90f864006c6c3c",
+        "short_sha": "59a4016d91",
         "subject": "RISK-1871 Position cache correction"
       }
     },
     {
-      "change_id": "COMMIT-36e46e72a0",
+      "change_id": "COMMIT-b6240c53a2",
       "change_type": "Chore",
       "classification": "TARGET-ONLY CHANGE",
       "classification_confidence": "MEDIUM",
-      "classification_reason": "Touches only release/version/build metadata files; treated as target-only release bookkeeping rather than a functional change requiring QA test coverage.",
+      "classification_reason": "Touches only release/version/build metadata files; treated as target-only release bookkeeping rather than a functional change.",
       "description": "Release 26.06 version bump",
       "merge_commit": false,
-      "qa": {
-        "comments": null,
-        "evidence_ref": null,
-        "reviewed_at": null,
-        "reviewer": null,
-        "source": "none",
-        "status": "NOT REVIEWED"
-      },
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T14:51:09+00:00",
+        "author_date": "2026-08-02T15:24:15+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": null,
-        "committer_date": "2026-08-02T14:51:09+00:00",
+        "committer_date": "2026-08-02T15:24:15+00:00",
         "deletions": 1,
         "files_changed": [
           "pom.xml"
@@ -531,38 +402,32 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "36e46e72a0c4275dc7d59a12a51e02799c6621a4",
-        "short_sha": "36e46e72a0",
+        "sha": "b6240c53a26050a2d2d8727e7052a5105272d35f",
+        "short_sha": "b6240c53a2",
         "subject": "Release 26.06 version bump"
       }
     }
   ],
   "metadata": {
     "comparison_algorithm": "merge-base divergence + bidirectional git-patch-id pairing, cross-checked against git-cherry patch-equivalence",
-    "generated_at": "2026-08-02T14:51:10+00:00",
+    "generated_at": "2026-08-02T15:24:16+00:00",
     "merge_base_candidates": [
-      "f8acaa269623bf5aef98cdd68d0764272665290f"
+      "294760941cffdbdc781dde5294af08874d1b02c3"
     ],
-    "merge_base_sha": "f8acaa269623bf5aef98cdd68d0764272665290f",
+    "merge_base_sha": "294760941cffdbdc781dde5294af08874d1b02c3",
     "repository": "https://git.example.com/risk-platform/locate-service.git",
-    "signoff_source": "sidecar:release-signoff-26.06.yaml@95896442143fcdd7",
     "source_branch": "release/26.05",
-    "source_sha": "d997a5c9c2444239db64d5ce7505410bd6ed8e6c",
+    "source_sha": "71e7471a3602ad6638e1d01d551942faa8dd7089",
     "target_branch": "release/26.06",
-    "target_sha": "cda3024c3a54472f0bb78d3d033bdaf11bf77485",
-    "tool_version": "1.0.0"
+    "target_sha": "20fb8c1fb53e4fe7088d97ed877c5e4a0c1ba8ca",
+    "tool_version": "2.0.0"
   },
   "release_status": "RELEASE REVIEW REQUIRED",
   "summary": {
     "carried_forward": 2,
     "needs_review": 0,
     "new_in_target": 3,
-    "not_applicable": 0,
     "potentially_missing": 2,
-    "qa_awaiting": 6,
-    "qa_failed": 1,
-    "qa_not_applicable": 0,
-    "qa_signed_off": 2,
     "reverted": 1,
     "target_only": 1,
     "total_changes": 9

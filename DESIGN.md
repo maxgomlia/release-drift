@@ -1,4 +1,4 @@
-# Design Notes — Release Change & QA Sign-off Report
+# Design Notes — Release Change Report
 
 These notes are the "explain before you implement" step requested. The
 implementation in this repo follows this design exactly.
@@ -91,15 +91,11 @@ report needs to show the "Source SHA → Target SHA" pairing. So:
    without conclusive evidence — is classified **NEEDS REVIEW**. We never
    guess.
 
-`INTENTIONALLY NOT APPLICABLE` and `TARGET-ONLY CHANGE` are **not** derived
-from Git alone:
-- `TARGET-ONLY CHANGE` is used for target commits that are new but are
-  clearly release-infrastructure/version-bump only (heuristic: touches only
-  version/build files, e.g. `pom.xml`, `build.gradle`, `VERSION`) — informational,
-  not a functional change QA needs to test.
-- `INTENTIONALLY NOT APPLICABLE` can only be set via the QA sign-off sidecar
-  (a human explicitly says "this doesn't apply to this release"). Git will
-  never auto-assign this state.
+`TARGET-ONLY CHANGE` is **not** derived purely from patch-id/cherry logic:
+it's used for target commits that are new but are clearly release-
+infrastructure/version-bump only (heuristic: touches only version/build
+files, e.g. `pom.xml`, `build.gradle`, `VERSION`) — informational, not a
+functional change.
 
 ## 2. Edge cases and known limitations
 
@@ -123,8 +119,8 @@ from Git alone:
   candidate.
 - **Whitespace/formatting-only reformatting commits**: patch-id is content
   sensitive, so a reformat will never "equal" the original. These will
-  appear as NEW/MISSING; a human reviewer disposition (sign-off sidecar) is
-  the correct place to mark these NOT APPLICABLE.
+  appear as NEW/MISSING; a human reading the report is the right place to
+  make that call, since the tool deliberately doesn't guess at intent.
 - **Merge commits with real conflict-resolution diffs**: included as their
   own change entry, classification determined the same way as any commit,
   but flagged in the report metadata as `merge_commit: true` so reviewers
@@ -144,10 +140,10 @@ from Git alone:
 - Tool performs **read-only** Git operations only: `fetch`, `merge-base`,
   `log`, `diff`, `show`, `cherry`, `patch-id`, `rev-parse`. No `checkout`,
   `reset`, `merge`, `rebase`, or history rewriting of any kind.
-- Determinism: given the same repo object state and the same sign-off
-  sidecar file, output is byte-identical (commit ordering is fixed by SHA,
-  JSON keys are sorted, timestamps aside from the `generated_at` field are
-  all sourced from Git object data, not wall-clock).
+- Determinism: given the same repo object state, output is byte-identical
+  (commit ordering is fixed by SHA, JSON keys are sorted, timestamps aside
+  from the `generated_at` field are all sourced from Git object data, not
+  wall-clock).
 
 ## 3. Data model (see `releaseanalyzer/models.py`)
 
@@ -162,39 +158,37 @@ ChangeEntry            # one row in the "what are we releasing" table
   change_id                  # e.g. RISK-1832, or synthetic id if absent
   description                 # derived from subject
   change_type                 # Bug Fix / Feature / Chore / Unknown (heuristic)
-  classification               # one of the 7 states from the brief
+  classification               # one of the 6 states from DESIGN.md §1
   classification_confidence    # HIGH / MEDIUM / LOW
   classification_reason        # human-readable justification (audit trail)
   source_commit: Optional[Commit]
   target_commit: Optional[Commit]
   related_commits: [Commit]     # e.g. multiple commits under one change id
-  qa: QaStatus
-
-QaStatus
-  status (NOT REVIEWED / TESTED-PASS / TESTED-FAIL / NOT APPLICABLE / SIGNED OFF)
-  reviewer, comments, evidence_ref, reviewed_at, source ("sidecar:<file>@<sha256>")
 
 ReleaseComparison        # top-level report payload
   metadata: RunMetadata   (repo id, source/target branch+sha, merge-base,
                             merge_base_candidates, tool_version, algorithm,
-                            generated_at, signoff_source)
+                            generated_at)
   changes: [ChangeEntry]
   summary: SummaryCounts  (derived, not hand-maintained)
-  blockers: [ChangeEntry]  (computed: FAIL / MISSING / NOT REVIEWED subset)
+  attention_items: [ChangeEntry]  (computed: MISSING + NEEDS_REVIEW subset)
+  release_status           # READY FOR RELEASE / RELEASE REVIEW REQUIRED
 ```
 
 ## 4. HTML layout (implemented in `releaseanalyzer/report_html.py`)
 
 1. Executive header — source → target banner + metadata grid.
-2. KPI card row — total / new / carried / missing / signed-off / awaiting.
-3. Overall release status banner (READY / INCOMPLETE / REVIEW REQUIRED),
-   computed from blockers, not hand-set.
-4. "What are we releasing?" table — collapsible rows, one per ChangeEntry.
-5. "Potentially missing / regression risk" section — one card per MISSING
-   item, prominent amber/red styling, explicit action checklist.
+2. KPI card row — total / new / carried forward / potentially missing /
+   needs review / reverted.
+3. Overall release status banner (READY / REVIEW REQUIRED), computed from
+   `attention_items`, not hand-set.
+4. "Potentially missing / regression risk" section — one card per MISSING
+   item, prominent amber/red styling, explicit action checklist. This is
+   the primary section — the whole point of the report.
+5. "What are we releasing?" table — collapsible rows, one per ChangeEntry.
 6. Branch divergence SVG diagram — merge-base, source-only commits,
    target-only commits, with ↔ equivalence markers.
-7. QA coverage section + blockers list.
+7. "Needs review" section — ambiguous classifications, same card layout.
 8. Audit/methodology footer — full metadata, deterministic, printable.
 
 All CSS is inlined in the single HTML file (no CDN dependency); a small

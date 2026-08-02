@@ -1,15 +1,18 @@
 """Renders a ReleaseComparison into a single, self-contained, printable
 HTML file. No external CSS/JS/font dependency (system font stack only),
 so the file is safe to archive as release evidence and open offline.
+
+Purely a comparison/diff report -- no QA sign-off workflow. The point is
+to answer, at a glance: what's being released, and what may have been
+missed from the previous release branch.
 """
 from __future__ import annotations
 
 import html
-from .models import ReleaseComparison, ChangeEntry, Classification, QaState
+from .models import ReleaseComparison, ChangeEntry, Classification
 
 STATUS_BANNER = {
     "READY FOR RELEASE": ("status-ready", "READY FOR RELEASE"),
-    "QA SIGN-OFF INCOMPLETE": ("status-warn", "QA SIGN-OFF INCOMPLETE"),
     "RELEASE REVIEW REQUIRED": ("status-block", "RELEASE REVIEW REQUIRED"),
 }
 
@@ -20,15 +23,6 @@ CLASS_BADGE = {
     Classification.TARGET_ONLY: ("badge-neutral", "Target-Only"),
     Classification.REVERTED: ("badge-warn", "Reverted"),
     Classification.NEEDS_REVIEW: ("badge-warn", "Needs Review"),
-    Classification.NOT_APPLICABLE: ("badge-neutral", "Not Applicable"),
-}
-
-QA_BADGE = {
-    QaState.NOT_REVIEWED: ("badge-neutral", "Not Reviewed"),
-    QaState.TESTED_PASS: ("badge-ok", "Tested - Pass"),
-    QaState.TESTED_FAIL: ("badge-danger", "Tested - Fail"),
-    QaState.NOT_APPLICABLE: ("badge-neutral", "Not Applicable"),
-    QaState.SIGNED_OFF: ("badge-ok", "Signed Off"),
 }
 
 
@@ -56,7 +50,6 @@ def render(comparison: ReleaseComparison) -> str:
         "".join(_render_missing_card(c, tone="warn") for c in needs_review)
         if needs_review else '<p class="empty-state">No changes require manual classification review.</p>'
     )
-    blockers_html = _render_blockers(comparison.blockers)
     branch_svg = _render_branch_svg(comparison)
 
     return f"""<!DOCTYPE html>
@@ -64,7 +57,7 @@ def render(comparison: ReleaseComparison) -> str:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Release Change &amp; QA Sign-off Report — {_e(m.source_branch)} → {_e(m.target_branch)}</title>
+<title>Release Change Report — {_e(m.source_branch)} → {_e(m.target_branch)}</title>
 <style>{_CSS}</style>
 </head>
 <body>
@@ -72,7 +65,7 @@ def render(comparison: ReleaseComparison) -> str:
 
   <header class="exec-header">
     <div class="exec-title">
-      <div class="eyebrow">Release Change &amp; QA Sign-off Report</div>
+      <div class="eyebrow">Release Change Report</div>
       <div class="release-flow">
         <div class="release-box">
           <div class="release-label">Source Release</div>
@@ -97,16 +90,15 @@ def render(comparison: ReleaseComparison) -> str:
     <div><span class="meta-k">Target HEAD</span><span class="meta-v">{_e(m.target_sha[:10])}</span></div>
     <div><span class="meta-k">Comparison method</span><span class="meta-v">{_e(m.comparison_algorithm)}</span></div>
     <div><span class="meta-k">Tool version</span><span class="meta-v">release-report v{_e(m.tool_version)}</span></div>
-    <div><span class="meta-k">QA sign-off source</span><span class="meta-v">{_e(m.signoff_source)}</span></div>
   </section>
 
   <section class="kpi-row">
-    {_kpi(s.total_changes, "Total Changes Reviewed")}
+    {_kpi(s.total_changes, "Total Changes")}
     {_kpi(s.new_in_target, "New in Target")}
     {_kpi(s.carried_forward, "Carried Forward")}
     {_kpi(s.potentially_missing, "Potentially Missing", "danger" if s.potentially_missing else "neutral")}
-    {_kpi(f"{s.qa_signed_off} / {s.total_changes}", "QA Signed Off")}
-    {_kpi(s.qa_awaiting, "Awaiting QA", "warn" if s.qa_awaiting else "neutral")}
+    {_kpi(s.needs_review, "Needs Review", "warn" if s.needs_review else "neutral")}
+    {_kpi(s.reverted, "Reverted")}
   </section>
 
   <section class="section">
@@ -115,14 +107,14 @@ def render(comparison: ReleaseComparison) -> str:
       Changes present on <strong>{_e(m.source_branch)}</strong> since the common ancestor with no
       equivalent patch (by patch-id or git-cherry) detected on <strong>{_e(m.target_branch)}</strong>.
       This does not automatically mean an error — some fixes are legitimately source-release-specific —
-      but every item below requires an explicit human disposition before sign-off.
+      but every item below is worth a deliberate decision before release.
     </p>
     {missing_html}
   </section>
 
   <section class="section">
     <h2>What Are We Releasing? — {_e(m.target_branch)}</h2>
-    <p class="section-note">Every relevant change since the common ancestor, classified and matched to QA status. Click a row to expand full detail.</p>
+    <p class="section-note">Every relevant change since the common ancestor, classified against the source release. Click a row to expand full detail.</p>
     <table class="change-table">
       <thead>
         <tr>
@@ -130,7 +122,6 @@ def render(comparison: ReleaseComparison) -> str:
           <th>Description</th>
           <th>Type</th>
           <th>Classification</th>
-          <th>QA Status</th>
         </tr>
       </thead>
       <tbody>
@@ -155,21 +146,8 @@ def render(comparison: ReleaseComparison) -> str:
     {review_html}
   </section>
 
-  <section class="section">
-    <h2>QA Coverage</h2>
-    <div class="qa-coverage-grid">
-      <div class="qa-cov-card"><div class="qa-cov-n">{s.total_changes}</div><div class="qa-cov-l">Release changes</div></div>
-      <div class="qa-cov-card ok"><div class="qa-cov-n">{s.qa_signed_off}</div><div class="qa-cov-l">Signed off</div></div>
-      <div class="qa-cov-card warn"><div class="qa-cov-n">{s.qa_awaiting}</div><div class="qa-cov-l">Awaiting QA</div></div>
-      <div class="qa-cov-card danger"><div class="qa-cov-n">{s.qa_failed}</div><div class="qa-cov-l">Failed</div></div>
-      <div class="qa-cov-card"><div class="qa-cov-n">{s.qa_not_applicable}</div><div class="qa-cov-l">Not applicable</div></div>
-    </div>
-    <h3>Release Blockers</h3>
-    {blockers_html}
-  </section>
-
   <footer class="audit-footer">
-    <h3>Audit &amp; Methodology</h3>
+    <h3>Methodology</h3>
     <dl class="audit-dl">
       <dt>Repository</dt><dd>{_e(m.repository)}</dd>
       <dt>Source</dt><dd>{_e(m.source_branch)} @ {_e(m.source_sha)}</dd>
@@ -179,7 +157,6 @@ def render(comparison: ReleaseComparison) -> str:
       <dt>Algorithm</dt><dd>{_e(m.comparison_algorithm)}</dd>
       <dt>Tool version</dt><dd>{_e(m.tool_version)}</dd>
       <dt>Generated</dt><dd>{_e(m.generated_at)}</dd>
-      <dt>QA sign-off source</dt><dd>{_e(m.signoff_source)}</dd>
     </dl>
     <p class="disclaimer">
       This report is generated from read-only Git analysis (merge-base, log, diff, patch-id, cherry).
@@ -233,7 +210,6 @@ def _commit_block(title: str, commit) -> str:
 
 def _render_row(c: ChangeEntry, idx: int) -> str:
     cls_class, cls_label = CLASS_BADGE.get(c.classification, ("badge-neutral", c.classification.value))
-    qa_class, qa_label = QA_BADGE.get(c.qa.status, ("badge-neutral", c.qa.status.value))
     row_id = f"row-{idx}"
     return f"""
     <tr class="change-row" data-target="{row_id}" onclick="toggleRow('{row_id}')">
@@ -241,27 +217,15 @@ def _render_row(c: ChangeEntry, idx: int) -> str:
       <td>{_e(c.description)}</td>
       <td>{_e(c.change_type)}</td>
       <td><span class="badge {cls_class}">{_e(cls_label)}</span></td>
-      <td><span class="badge {qa_class}">{_e(qa_label)}</span></td>
     </tr>
     <tr class="change-detail-row" id="{row_id}">
-      <td colspan="5">
+      <td colspan="4">
         <div class="change-detail">
           <p class="reason"><strong>Classification basis:</strong> {_e(c.classification_reason)}
              <span class="confidence">(confidence: {_e(c.classification_confidence.value)})</span></p>
           <div class="commit-blocks">
             {_commit_block(f"Source ({c.source_commit.short_sha if c.source_commit else '—'})", c.source_commit)}
             {_commit_block(f"Target ({c.target_commit.short_sha if c.target_commit else '—'})", c.target_commit)}
-          </div>
-          <div class="qa-detail">
-            <strong>QA:</strong> {_e(c.qa.status.value)}
-            &nbsp;|&nbsp; Reviewer: {_e(c.qa.reviewer or "—")}
-            &nbsp;|&nbsp; Reviewed: {_e(c.qa.reviewed_at or "—")}
-            <br>
-            <strong>Comments:</strong> {_e(c.qa.comments or "—")}
-            <br>
-            <strong>Evidence:</strong> {_e(c.qa.evidence_ref or "—")}
-            <br>
-            <span class="source-tag">QA data source: {_e(c.qa.source)}</span>
           </div>
         </div>
       </td>
@@ -289,18 +253,6 @@ def _render_missing_card(c: ChangeEntry, tone: str = "danger") -> str:
         <label><input type="checkbox" disabled> Investigate</label>
       </div>
     </div>"""
-
-
-def _render_blockers(blockers: list[ChangeEntry]) -> str:
-    if not blockers:
-        return '<p class="empty-state">No release blockers identified.</p>'
-    rows = "".join(
-        f'<tr><td class="mono">{_e(b.change_id)}</td><td>{_e(b.description)}</td>'
-        f'<td>{_e(CLASS_BADGE.get(b.classification, ("", b.classification.value))[1])}</td>'
-        f'<td>{_e(QA_BADGE.get(b.qa.status, ("", b.qa.status.value))[1])}</td></tr>'
-        for b in blockers
-    )
-    return f"""<table class="blockers-table"><thead><tr><th>Change</th><th>Description</th><th>Classification</th><th>QA Status</th></tr></thead><tbody>{rows}</tbody></table>"""
 
 
 def _render_branch_svg(comparison: ReleaseComparison) -> str:
@@ -359,7 +311,6 @@ h3{font-size:15px;color:var(--navy);margin:20px 0 8px;}
 .release-arrow{font-size:26px;color:#9fb0c9;}
 .status-banner{padding:10px 20px;border-radius:4px;font-weight:700;font-size:14px;letter-spacing:.03em;white-space:nowrap;}
 .status-ready{background:var(--green-bg);color:var(--green);}
-.status-warn{background:var(--amber-bg);color:var(--amber);}
 .status-block{background:var(--red-bg);color:var(--red);}
 
 .meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 24px;background:var(--card);
@@ -394,11 +345,8 @@ table.commit-meta td{padding:2px 0;word-break:break-word;}
 .ins{color:var(--green);} .del{color:var(--red);}
 .file-list{margin-top:8px;font-size:12px;}
 .file-list ul{margin:6px 0 0;padding-left:18px;max-height:140px;overflow:auto;}
-.qa-detail{margin-top:12px;font-size:13px;background:#fff;border:1px solid var(--border);border-radius:4px;padding:10px 12px;}
-.source-tag{color:var(--muted);font-size:11px;}
 
 .badge{display:inline-block;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.02em;}
-.badge-ok{background:var(--green-bg);color:var(--green);}
 .badge-warn{background:var(--amber-bg);color:var(--amber);}
 .badge-danger{background:var(--red-bg);color:var(--red);}
 .badge-info{background:var(--blue-bg);color:var(--blue);}
@@ -418,18 +366,6 @@ table.commit-meta td{padding:2px 0;word-break:break-word;}
 .branch-viz{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:16px;}
 .branch-svg{width:100%;height:auto;}
 
-.qa-coverage-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:8px;}
-.qa-cov-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center;}
-.qa-cov-n{font-size:22px;font-weight:700;color:var(--navy);}
-.qa-cov-l{font-size:11px;color:var(--muted);text-transform:uppercase;}
-.qa-cov-card.ok .qa-cov-n{color:var(--green);}
-.qa-cov-card.warn .qa-cov-n{color:var(--amber);}
-.qa-cov-card.danger .qa-cov-n{color:var(--red);}
-
-table.blockers-table{width:100%;border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
-table.blockers-table th{background:#eef1f6;text-align:left;padding:8px 12px;font-size:11px;text-transform:uppercase;color:var(--navy);}
-table.blockers-table td{padding:8px 12px;border-top:1px solid var(--border);}
-
 .empty-state{color:var(--muted);font-size:13px;font-style:italic;}
 .mono{font-family:monospace;}
 
@@ -448,7 +384,6 @@ table.blockers-table td{padding:8px 12px;border-top:1px solid var(--border);}
   .kpi-row{grid-template-columns:repeat(2,1fr);}
   .meta-grid{grid-template-columns:1fr;}
   .commit-blocks{grid-template-columns:1fr;}
-  .qa-coverage-grid{grid-template-columns:repeat(2,1fr);}
 }
 """
 
