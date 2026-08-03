@@ -311,6 +311,27 @@ def _related_commits_hint(c: ChangeEntry) -> str:
       </div>"""
 
 
+def _target_file_history_hint(c: ChangeEntry, target_branch: str) -> str:
+    if not c.target_file_history:
+        return ""
+    related_shas = {rc.sha for rc in c.related_commits}
+    new_entries = [h for h in c.target_file_history if h.sha not in related_shas]
+    if not new_entries:
+        return ""
+    rows = "".join(
+        f'<li><code>{_e(h.short_sha)}</code> {_e(h.subject)} '
+        f'<span class="muted">({_e(h.author_date[:10])})</span></li>'
+        for h in new_entries
+    )
+    return f"""
+      <div class="risk-hint">
+        <strong>Recent history of this file on {_e(target_branch)}</strong> — searched independently of the
+        computed divergence point, so this also catches cases where an equivalent fix is already part of
+        shared/common history (e.g. after the target branch was rebased or recreated from a later point):
+        <ul>{rows}</ul>
+      </div>"""
+
+
 def _manual_check_commands(c: ChangeEntry, m) -> str:
     src, tgt = c.source_commit, c.target_commit
     lines = []
@@ -351,6 +372,7 @@ def _render_missing_card(c: ChangeEntry, tone: str = "danger", metadata=None) ->
         </div>
         {diffs_html}
         {_related_commits_hint(c)}
+        {_target_file_history_hint(c, metadata.target_branch) if metadata else ""}
         {_manual_check_commands(c, metadata) if metadata else ""}
         <div class="risk-actions">
           Action required:

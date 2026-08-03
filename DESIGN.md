@@ -134,6 +134,17 @@ functional change.
   --all` can return more than one base commit. We pick the first
   deterministically (matches `git merge-base` default behavior) and record
   all candidates in the audit metadata for transparency.
+- **Rebased or recreated target branch**: if the target branch was rebased
+  onto (or freshly created from) a later point on its upstream (e.g.
+  `main`), the computed merge-base shifts accordingly, and an equivalent
+  fix can end up part of the *shared* ancestry both branches now inherit
+  rather than a target-unique commit. A search limited to
+  `merge_base..target` (the target-unique `related_commits` hint) cannot
+  see it. `target_file_history` searches the file's full history on the
+  target branch independent of the divergence point specifically to catch
+  this -- it does not change the classification (a MISSING verdict can
+  still be correct even when the file was touched earlier in shared
+  history), it only ensures a human reviewer sees that context.
 - **Binary files**: patch-id still hashes the binary diff bytes; no special
   handling needed, but line add/delete counts for binary files are reported
   as 0/0 (Git convention) and this is noted in the UI ("binary file").

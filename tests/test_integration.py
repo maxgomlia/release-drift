@@ -278,5 +278,52 @@ class TestFileOverlapHintWithoutChangeIdCorrelation(unittest.TestCase):
         self.assertEqual(entry.related_commits[0].sha, self.manual_no_id)
 
 
+class TestSharedHistoryFixCaughtByFullFileHistorySearch(unittest.TestCase):
+    """Reproduces the real-world scenario reported: an equivalent fix
+    already exists in the *shared* ancestry both branches inherit (i.e. it
+    predates the computed merge-base), so it's invisible to a target-unique
+    search -- but a source-side branch also carries its own extra commit
+    touching the same file, with no target-unique equivalent. The
+    target-unique-only `related_commits` hint correctly finds nothing;
+    `target_file_history` (full branch history, not divergence-limited)
+    is the complementary signal that still surfaces the earlier fix.
+    """
+
+    def setUp(self):
+        self.repo = RepoBuilder()
+        self.repo.commit("Initial", {"a.txt": "1\n"})
+        self.repo.commit("BASE naive shared.py", {"shared.py": "def f():\n    return 0\n"})
+        self.main_fix = self.repo.commit(
+            "Properly fix shared logic on main", {"shared.py": "def f():\n    return 1\n"},
+        )
+        # Both branches fork AFTER the fix -- it's shared/common ancestry.
+        self.repo.branch("release/26.05", self.main_fix)
+        self.repo.branch("release/26.06", self.main_fix)
+
+        self.repo.checkout("release/26.05")
+        self.hotfix = self.repo.commit(
+            "RISK-9010 Extra hotfix on top", {"shared.py": "def f():\n    return 1  # extra tweak\n"},
+        )
+        self.repo.checkout("main")
+
+    def tearDown(self):
+        self.repo.cleanup()
+
+    def test_target_file_history_finds_fix_that_predates_merge_base(self):
+        comparison = analyzer.analyze(
+            self.repo.path, "release/26.05", "release/26.06", fetch=False,
+        )
+        analyzer.summarize(comparison)
+
+        entry = next(c for c in comparison.changes if c.change_id == "RISK-9010")
+        self.assertEqual(entry.classification, Classification.MISSING_FROM_TARGET)
+        # related_commits (target-unique only) correctly finds nothing --
+        # the fix isn't a target-unique commit, it's shared history.
+        self.assertEqual(entry.related_commits, [])
+        # target_file_history (full branch history) DOES find it.
+        history_shas = {h.sha for h in entry.target_file_history}
+        self.assertIn(self.main_fix, history_shas)
+
+
 if __name__ == "__main__":
     unittest.main()

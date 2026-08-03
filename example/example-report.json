@@ -10,12 +10,12 @@
       "merge_commit": false,
       "related_commits": [],
       "source_commit": {
-        "author_date": "2026-08-02T17:12:06+00:00",
+        "author_date": "2026-08-03T02:21:54+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1942",
-        "committer_date": "2026-08-02T17:12:06+00:00",
+        "committer_date": "2026-08-03T02:21:54+00:00",
         "deletions": 0,
         "diff_files": [
           {
@@ -68,11 +68,12 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "7f9e2aa9606b92b57c58a19e5b1c62dcb48519fb",
-        "short_sha": "7f9e2aa960",
+        "sha": "0d459821db383e30aca9cc325b77a543e6dec2e6",
+        "short_sha": "0d459821db",
         "subject": "RISK-1942 Fix position validation"
       },
-      "target_commit": null
+      "target_commit": null,
+      "target_file_history": []
     },
     {
       "change_id": "RISK-1955",
@@ -84,12 +85,12 @@
       "merge_commit": false,
       "related_commits": [
         {
-          "author_date": "2026-08-02T17:12:06+00:00",
+          "author_date": "2026-08-03T02:21:54+00:00",
           "author_email": "platform-eng@example.com",
           "author_name": "Platform Engineering",
-          "body": "(cherry picked from commit 9c415b46b73db7d567d354347d924ab94a1bc1be)",
+          "body": "(cherry picked from commit e802dd761e059fd57bbd1889de2af0ebc045988b)",
           "change_id": "RISK-1832",
-          "committer_date": "2026-08-02T17:12:06+00:00",
+          "committer_date": "2026-08-03T02:21:54+00:00",
           "deletions": 0,
           "diff_files": [],
           "diff_text": null,
@@ -103,18 +104,18 @@
           "pr_state": null,
           "pr_title": null,
           "pr_url": null,
-          "sha": "ccc5cd85716f0498f06e777c52acbb7f9b7d7de8",
-          "short_sha": "ccc5cd8571",
+          "sha": "b9515a57c75271678bc42b2f97b8757714144165",
+          "short_sha": "b9515a57c7",
           "subject": "RISK-1832 Fix locate validation"
         }
       ],
       "source_commit": {
-        "author_date": "2026-08-02T17:12:06+00:00",
+        "author_date": "2026-08-03T02:21:54+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1955",
-        "committer_date": "2026-08-02T17:12:06+00:00",
+        "committer_date": "2026-08-03T02:21:54+00:00",
         "deletions": 0,
         "diff_files": [
           {
@@ -179,11 +180,12 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "91f255d789755f42e07ba2ea3a9c2fd5342a8a11",
-        "short_sha": "91f255d789",
+        "sha": "e1567f4440021dd7b75dd499bfec15341ee7a0b3",
+        "short_sha": "e1567f4440",
         "subject": "RISK-1955 Minor logging cleanup in locate service"
       },
-      "target_commit": null
+      "target_commit": null,
+      "target_file_history": []
     }
   ],
   "changes": [
@@ -197,12 +199,12 @@
       "merge_commit": false,
       "related_commits": [],
       "source_commit": {
-        "author_date": "2026-08-02T17:12:06+00:00",
+        "author_date": "2026-08-03T02:21:54+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1942",
-        "committer_date": "2026-08-02T17:12:06+00:00",
+        "committer_date": "2026-08-03T02:21:54+00:00",
         "deletions": 0,
         "diff_files": [
           {
@@ -255,11 +257,12 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "7f9e2aa9606b92b57c58a19e5b1c62dcb48519fb",
-        "short_sha": "7f9e2aa960",
+        "sha": "0d459821db383e30aca9cc325b77a543e6dec2e6",
+        "short_sha": "0d459821db",
         "subject": "RISK-1942 Fix position validation"
       },
-      "target_commit": null
+      "target_commit": null,
+      "target_file_history": []
     },
     {
       "change_id": "RISK-1955",
@@ -271,12 +274,12 @@
       "merge_commit": false,
       "related_commits": [
         {
-          "author_date": "2026-08-02T17:12:06+00:00",
+          "author_date": "2026-08-03T02:21:54+00:00",
           "author_email": "platform-eng@example.com",
           "author_name": "Platform Engineering",
-          "body": "(cherry picked from commit 9c415b46b73db7d567d354347d924ab94a1bc1be)",
+          "body": "(cherry picked from commit e802dd761e059fd57bbd1889de2af0ebc045988b)",
           "change_id": "RISK-1832",
-          "committer_date": "2026-08-02T17:12:06+00:00",
+          "committer_date": "2026-08-03T02:21:54+00:00",
           "deletions": 0,
           "diff_files": [],
           "diff_text": null,
@@ -290,18 +293,18 @@
           "pr_state": null,
           "pr_title": null,
           "pr_url": null,
-          "sha": "ccc5cd85716f0498f06e777c52acbb7f9b7d7de8",
-          "short_sha": "ccc5cd8571",
+          "sha": "b9515a57c75271678bc42b2f97b8757714144165",
+          "short_sha": "b9515a57c7",
           "subject": "RISK-1832 Fix locate validation"
         }
       ],
       "source_commit": {
-        "author_date": "2026-08-02T17:12:06+00:00",
+        "author_date": "2026-08-03T02:21:54+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1955",
-        "committer_date": "2026-08-02T17:12:06+00:00",
+        "committer_date": "2026-08-03T02:21:54+00:00",
         "deletions": 0,
         "diff_files": [
           {
@@ -366,29 +369,30 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "91f255d789755f42e07ba2ea3a9c2fd5342a8a11",
-        "short_sha": "91f255d789",
+        "sha": "e1567f4440021dd7b75dd499bfec15341ee7a0b3",
+        "short_sha": "e1567f4440",
         "subject": "RISK-1955 Minor logging cleanup in locate service"
       },
-      "target_commit": null
+      "target_commit": null,
+      "target_file_history": []
     },
     {
       "change_id": "RISK-1990",
       "change_type": "Unknown",
       "classification": "REVERTED",
       "classification_confidence": "MEDIUM",
-      "classification_reason": "Commit message identifies this as a revert of 8025a6aa89. Could not confirm the reverted commit's classification in this comparison; flagged for manual confirmation.",
+      "classification_reason": "Commit message identifies this as a revert of ab755cda1b. Could not confirm the reverted commit's classification in this comparison; flagged for manual confirmation.",
       "description": "Revert \"RISK-1990 Experimental order-routing change\"",
       "merge_commit": false,
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T17:12:06+00:00",
+        "author_date": "2026-08-03T02:21:54+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
-        "body": "This reverts commit 8025a6aa8963e99bfaa80f2d24a934ffa07ec26a.",
+        "body": "This reverts commit ab755cda1b541d25d82c8c812b80afa7ad55baf0.",
         "change_id": "RISK-1990",
-        "committer_date": "2026-08-02T17:12:06+00:00",
+        "committer_date": "2026-08-03T02:21:54+00:00",
         "deletions": 2,
         "diff_files": [],
         "diff_text": null,
@@ -402,10 +406,11 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "0d0ea9b92d6f52caa56fdef6869a1aedb3b63abd",
-        "short_sha": "0d0ea9b92d",
+        "sha": "b9687e95cab998a3bbba192e9cb2d619126e72a4",
+        "short_sha": "b9687e95ca",
         "subject": "Revert \"RISK-1990 Experimental order-routing change\""
-      }
+      },
+      "target_file_history": []
     },
     {
       "change_id": "RISK-1903",
@@ -418,12 +423,12 @@
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T17:12:06+00:00",
+        "author_date": "2026-08-03T02:21:54+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1903",
-        "committer_date": "2026-08-02T17:12:06+00:00",
+        "committer_date": "2026-08-03T02:21:54+00:00",
         "deletions": 0,
         "diff_files": [],
         "diff_text": null,
@@ -437,10 +442,11 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "9bdc84999f754966f6175512120d49081312f164",
-        "short_sha": "9bdc84999f",
+        "sha": "da5de8932e6bda137364f5c98c7a78d20cf54024",
+        "short_sha": "da5de8932e",
         "subject": "RISK-1903 Add new locate query handling"
-      }
+      },
+      "target_file_history": []
     },
     {
       "change_id": "RISK-1981",
@@ -453,12 +459,12 @@
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T17:12:06+00:00",
+        "author_date": "2026-08-03T02:21:54+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1981",
-        "committer_date": "2026-08-02T17:12:06+00:00",
+        "committer_date": "2026-08-03T02:21:54+00:00",
         "deletions": 0,
         "diff_files": [],
         "diff_text": null,
@@ -472,10 +478,11 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "86b49600cfe8a11f0e823fa1dc7a8a68d63ecfee",
-        "short_sha": "86b49600cf",
+        "sha": "80e464c8595013c8d7d3e6efcb158fa6f8a0bc9c",
+        "short_sha": "80e464c859",
         "subject": "RISK-1981 Add throttling to market data feed"
-      }
+      },
+      "target_file_history": []
     },
     {
       "change_id": "RISK-1990",
@@ -488,12 +495,12 @@
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T17:12:06+00:00",
+        "author_date": "2026-08-03T02:21:54+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1990",
-        "committer_date": "2026-08-02T17:12:06+00:00",
+        "committer_date": "2026-08-03T02:21:54+00:00",
         "deletions": 0,
         "diff_files": [],
         "diff_text": null,
@@ -507,27 +514,28 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "8025a6aa8963e99bfaa80f2d24a934ffa07ec26a",
-        "short_sha": "8025a6aa89",
+        "sha": "ab755cda1b541d25d82c8c812b80afa7ad55baf0",
+        "short_sha": "ab755cda1b",
         "subject": "RISK-1990 Experimental order-routing change"
-      }
+      },
+      "target_file_history": []
     },
     {
       "change_id": "RISK-1832",
       "change_type": "Bug Fix",
       "classification": "CARRIED FORWARD",
       "classification_confidence": "HIGH",
-      "classification_reason": "Patch-id 9ef8534e2c01 matches target commit ccc5cd8571 (git cherry corroborates).",
+      "classification_reason": "Patch-id 9ef8534e2c01 matches target commit b9515a57c7 (git cherry corroborates).",
       "description": "RISK-1832 Fix locate validation",
       "merge_commit": false,
       "related_commits": [],
       "source_commit": {
-        "author_date": "2026-08-02T17:12:06+00:00",
+        "author_date": "2026-08-03T02:21:54+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1832",
-        "committer_date": "2026-08-02T17:12:06+00:00",
+        "committer_date": "2026-08-03T02:21:54+00:00",
         "deletions": 0,
         "diff_files": [],
         "diff_text": null,
@@ -541,17 +549,17 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "9c415b46b73db7d567d354347d924ab94a1bc1be",
-        "short_sha": "9c415b46b7",
+        "sha": "e802dd761e059fd57bbd1889de2af0ebc045988b",
+        "short_sha": "e802dd761e",
         "subject": "RISK-1832 Fix locate validation"
       },
       "target_commit": {
-        "author_date": "2026-08-02T17:12:06+00:00",
+        "author_date": "2026-08-03T02:21:54+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
-        "body": "(cherry picked from commit 9c415b46b73db7d567d354347d924ab94a1bc1be)",
+        "body": "(cherry picked from commit e802dd761e059fd57bbd1889de2af0ebc045988b)",
         "change_id": "RISK-1832",
-        "committer_date": "2026-08-02T17:12:06+00:00",
+        "committer_date": "2026-08-03T02:21:54+00:00",
         "deletions": 0,
         "diff_files": [],
         "diff_text": null,
@@ -565,27 +573,28 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "ccc5cd85716f0498f06e777c52acbb7f9b7d7de8",
-        "short_sha": "ccc5cd8571",
+        "sha": "b9515a57c75271678bc42b2f97b8757714144165",
+        "short_sha": "b9515a57c7",
         "subject": "RISK-1832 Fix locate validation"
-      }
+      },
+      "target_file_history": []
     },
     {
       "change_id": "RISK-1871",
       "change_type": "Unknown",
       "classification": "CARRIED FORWARD",
       "classification_confidence": "HIGH",
-      "classification_reason": "Patch-id 241390a43d2d matches target commit 6ef0120a76 (git cherry corroborates).",
+      "classification_reason": "Patch-id 241390a43d2d matches target commit f9dbf732f0 (git cherry corroborates).",
       "description": "RISK-1871 Position cache correction",
       "merge_commit": false,
       "related_commits": [],
       "source_commit": {
-        "author_date": "2026-08-02T17:12:06+00:00",
+        "author_date": "2026-08-03T02:21:54+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": "RISK-1871",
-        "committer_date": "2026-08-02T17:12:06+00:00",
+        "committer_date": "2026-08-03T02:21:54+00:00",
         "deletions": 0,
         "diff_files": [],
         "diff_text": null,
@@ -599,17 +608,17 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "e77dc5bb2de71c238d3de801b6015146e41d8158",
-        "short_sha": "e77dc5bb2d",
+        "sha": "d006bc6b867286b74e571232cfbf5486345e1728",
+        "short_sha": "d006bc6b86",
         "subject": "RISK-1871 Position cache correction"
       },
       "target_commit": {
-        "author_date": "2026-08-02T17:12:06+00:00",
+        "author_date": "2026-08-03T02:21:54+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
-        "body": "(cherry picked from commit e77dc5bb2de71c238d3de801b6015146e41d8158)",
+        "body": "(cherry picked from commit d006bc6b867286b74e571232cfbf5486345e1728)",
         "change_id": "RISK-1871",
-        "committer_date": "2026-08-02T17:12:06+00:00",
+        "committer_date": "2026-08-03T02:21:54+00:00",
         "deletions": 0,
         "diff_files": [],
         "diff_text": null,
@@ -623,13 +632,14 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "6ef0120a76a5518cea8a6908f543034739ec2dba",
-        "short_sha": "6ef0120a76",
+        "sha": "f9dbf732f0aee80c59c8b8da302e54b837d56134",
+        "short_sha": "f9dbf732f0",
         "subject": "RISK-1871 Position cache correction"
-      }
+      },
+      "target_file_history": []
     },
     {
-      "change_id": "COMMIT-e062b0459a",
+      "change_id": "COMMIT-09c70ac5ca",
       "change_type": "Chore",
       "classification": "TARGET-ONLY CHANGE",
       "classification_confidence": "MEDIUM",
@@ -639,12 +649,12 @@
       "related_commits": [],
       "source_commit": null,
       "target_commit": {
-        "author_date": "2026-08-02T17:12:06+00:00",
+        "author_date": "2026-08-03T02:21:54+00:00",
         "author_email": "platform-eng@example.com",
         "author_name": "Platform Engineering",
         "body": "",
         "change_id": null,
-        "committer_date": "2026-08-02T17:12:06+00:00",
+        "committer_date": "2026-08-03T02:21:54+00:00",
         "deletions": 1,
         "diff_files": [],
         "diff_text": null,
@@ -658,24 +668,25 @@
         "pr_state": null,
         "pr_title": null,
         "pr_url": null,
-        "sha": "e062b0459a8dc104d1978bdb62fb7660ff9606cd",
-        "short_sha": "e062b0459a",
+        "sha": "09c70ac5cab5e5f87d011de11c147d4ce3078a1b",
+        "short_sha": "09c70ac5ca",
         "subject": "Release 26.06 version bump"
-      }
+      },
+      "target_file_history": []
     }
   ],
   "metadata": {
     "comparison_algorithm": "merge-base divergence + bidirectional git-patch-id pairing, cross-checked against git-cherry patch-equivalence",
-    "generated_at": "2026-08-02T17:12:06+00:00",
+    "generated_at": "2026-08-03T02:21:54+00:00",
     "merge_base_candidates": [
-      "d023a2e9e31ac2b924cc38c06091b701c8f8790a"
+      "673e79c0584de8e65e5a237bc10a69371b2c144f"
     ],
-    "merge_base_sha": "d023a2e9e31ac2b924cc38c06091b701c8f8790a",
+    "merge_base_sha": "673e79c0584de8e65e5a237bc10a69371b2c144f",
     "repository": "https://git.example.com/risk-platform/locate-service.git",
     "source_branch": "release/26.05",
-    "source_sha": "91f255d789755f42e07ba2ea3a9c2fd5342a8a11",
+    "source_sha": "e1567f4440021dd7b75dd499bfec15341ee7a0b3",
     "target_branch": "release/26.06",
-    "target_sha": "0d0ea9b92d6f52caa56fdef6869a1aedb3b63abd",
+    "target_sha": "b9687e95cab998a3bbba192e9cb2d619126e72a4",
     "tool_version": "2.0.0"
   },
   "release_status": "RELEASE REVIEW REQUIRED",

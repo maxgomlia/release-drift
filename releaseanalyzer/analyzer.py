@@ -264,7 +264,7 @@ def analyze(
             "target release.",
         ))
 
-    _enrich_attention_entries(repo_dir, changes, target_commits)
+    _enrich_attention_entries(repo_dir, changes, target_commits, target_branch)
 
     changes.sort(key=_sort_key)
 
@@ -322,6 +322,7 @@ def _enrich_attention_entries(
     repo_dir: str,
     changes: list[ChangeEntry],
     target_commits: list[Commit],
+    target_branch: str,
 ) -> None:
     """For MISSING/NEEDS_REVIEW entries only (kept selective for performance
     on large repos), populate:
@@ -331,13 +332,17 @@ def _enrich_attention_entries(
        fallback (`diff_text`) for JSON/non-HTML consumers. One git call
        produces both -- the plain text is truncated for size, the structured
        version is parsed from the same raw diff with its own per-file cap.
-    2. `related_commits`: target-only commits that touched at least one of
-       the same files, purely as a "you might want to check this manually"
-       hint -- NOT a classification signal. This is the safety net for
-       changes that were manually re-ported (not cherry-picked) with a
-       diff that doesn't patch-id-match: if someone touched the same file
-       in target but the content genuinely differs, this surfaces it for a
-       human to judge rather than requiring a separate search.
+    2. `related_commits`: target-UNIQUE commits (since the computed
+       merge-base) that touched at least one of the same files -- a
+       "you might want to check this manually" hint, NOT a classification
+       signal.
+    3. `target_file_history`: the file's full history on the target branch,
+       regardless of the computed merge-base. This exists specifically for
+       the case `related_commits` cannot cover: if the target branch was
+       rebased or recreated from a later point on its upstream, an
+       equivalent fix can end up part of the *shared* ancestry rather than
+       a target-unique commit, invisible to a merge-base-limited search.
+       Searching the file's full branch history closes that gap.
     """
     for entry in changes:
         if entry.classification not in (Classification.MISSING_FROM_TARGET, Classification.NEEDS_REVIEW):
@@ -366,6 +371,17 @@ def _enrich_attention_entries(
                     candidates.append((len(overlap), tc))
             candidates.sort(key=lambda pair: pair[0], reverse=True)
             entry.related_commits = [c for _, c in candidates[:3]]
+
+            related_shas = {c.sha for c in entry.related_commits}
+            history_commits: list[Commit] = []
+            seen_shas: set[str] = set(related_shas)
+            for path in list(source_files)[:2]:   # bound cost: at most 2 files per entry
+                for raw_hist in git_ops.file_history(repo_dir, target_branch, path, limit=3):
+                    if raw_hist.sha in seen_shas:
+                        continue
+                    seen_shas.add(raw_hist.sha)
+                    history_commits.append(_to_commit(repo_dir, raw_hist))
+            entry.target_file_history = history_commits[:5]
 
 
 def _sort_key(entry: ChangeEntry):

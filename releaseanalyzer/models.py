@@ -95,7 +95,8 @@ class ChangeEntry:
     classification_reason: str
     source_commit: Optional[Commit] = None
     target_commit: Optional[Commit] = None
-    related_commits: list[Commit] = field(default_factory=list)  # for MISSING/NEEDS_REVIEW: target commits sharing changed files, as a manual-check hint (not a classification signal)
+    related_commits: list[Commit] = field(default_factory=list)  # for MISSING/NEEDS_REVIEW: target-unique commits sharing changed files, as a manual-check hint (not a classification signal)
+    target_file_history: list[Commit] = field(default_factory=list)  # for MISSING: full target-branch history of the source file(s), regardless of divergence point -- catches equivalents already in shared/common history after a rebase
     merge_commit: bool = False
 
     def to_dict(self) -> dict:
@@ -109,6 +110,7 @@ class ChangeEntry:
             "source_commit": self.source_commit.to_dict() if self.source_commit else None,
             "target_commit": self.target_commit.to_dict() if self.target_commit else None,
             "related_commits": [c.to_dict() for c in self.related_commits],
+            "target_file_history": [c.to_dict() for c in self.target_file_history],
             "merge_commit": self.merge_commit,
         }
 

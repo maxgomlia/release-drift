@@ -146,6 +146,45 @@ def log_range(repo_dir: str, range_expr: str) -> list[RawCommit]:
     return commits
 
 
+def file_history(repo_dir: str, ref: str, path: str, limit: int = 5) -> list[RawCommit]:
+    """git log <ref> -- <path>, most recent first, capped at `limit`.
+
+    Unlike log_range(), this deliberately searches the FULL history of a
+    branch for a file, not just the commits unique to it since some
+    merge-base. This matters when a branch has been rebased or recreated:
+    the "equivalent fix" a reviewer is looking for may already be part of
+    the *shared* ancestry after a rebase, which a merge-base-limited search
+    would never see. This is purely a display/investigation aid, never a
+    classification signal -- it does not change any MISSING/CARRIED
+    FORWARD/etc. verdict, only what's suggested to a human as worth
+    checking.
+    """
+    out = _run(
+        repo_dir,
+        ["log", f"-{limit}", ref, f"--pretty=tformat:{LOG_FORMAT}", "--no-color", "--", path],
+        check=False,
+    )
+    commits: list[RawCommit] = []
+    if not out.strip():
+        return commits
+    for record in out.split(_RS):
+        record = record.strip("\n")
+        if not record.strip():
+            continue
+        parts = record.split(_US)
+        if len(parts) < 8:
+            continue
+        sha, an, ae, ad, cd, subject, body, parents = parts[:8]
+        commits.append(
+            RawCommit(
+                sha=sha.strip(), author_name=an, author_email=ae, author_date=ad,
+                committer_date=cd, subject=subject.strip(), body=body.strip(),
+                parents=[p for p in parents.strip().split(" ") if p],
+            )
+        )
+    return commits
+
+
 def raw_diff(repo_dir: str, sha: str) -> str:
     """Full unified diff for a commit vs its first parent (or the empty
     tree for a root commit). No truncation -- callers truncate as needed."""

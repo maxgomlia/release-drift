@@ -157,11 +157,18 @@ leaving the report:
   actually want to inspect. For `NEEDS REVIEW` items with both a source
   and target commit (e.g. a reworked fix), both diffs are available so you
   can visually compare intent.
-- **"Possibly related target commit(s)"** — if any target-only commit
-  touched the same file(s), it's listed as a hint, even when the diff
-  didn't patch-id-match. This is specifically for changes that were
-  manually re-ported (typed by hand, not `git cherry-pick`ed) with a
-  slightly different diff than the original
+- **"Possibly related target commit(s)"** — if any target-*unique* commit
+  (since the computed divergence point) touched the same file(s), it's
+  listed as a hint, even when the diff didn't patch-id-match. This is for
+  changes that were manually re-ported (typed by hand, not `git
+  cherry-pick`ed) with a slightly different diff than the original.
+- **"Recent history of this file on target"** — searches the file's *full*
+  history on the target branch, independent of the computed divergence
+  point. This exists specifically for the case the hint above can't cover:
+  if the target branch was rebased or recreated from a later point on its
+  upstream (e.g. `main`), an equivalent fix can end up part of the
+  *shared* ancestry both branches inherit rather than a target-unique
+  commit — invisible to a divergence-limited search, but still found here.
 - **Copy-pasteable `git show`/`git log` commands** for a full manual check
   against your real repo
 
@@ -254,9 +261,12 @@ python -m unittest discover -s tests -v
 - `tests/test_integration.py` also covers **manual (non-cherry-pick)
   porting**: an identical hand-typed change still classifies as `CARRIED
   FORWARD`, an incomplete/different hand-port downgrades to `NEEDS
-  REVIEW`/`MISSING` rather than silently passing, and the file-overlap
-  hint (`related_commits`) correctly surfaces a same-file target commit
-  even with no matching change ID to correlate on.
+  REVIEW`/`MISSING` rather than silently passing, the file-overlap hint
+  (`related_commits`) correctly surfaces a same-file target commit even
+  with no matching change ID to correlate on, and **rebased/recreated
+  target branches**: an equivalent fix that predates the computed
+  merge-base (shared ancestry, invisible to a target-unique-only search)
+  is still surfaced via `target_file_history`.
 
 All tests operate on real Git object data (no mocking of git commands),
 since the whole point of this tool is correct behaviour against real Git
