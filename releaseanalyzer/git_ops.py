@@ -161,7 +161,7 @@ def file_history(repo_dir: str, ref: str, path: str, limit: int = 5) -> list[Raw
     """
     out = _run(
         repo_dir,
-        ["log", f"-{limit}", ref, f"--pretty=tformat:{LOG_FORMAT}", "--no-color", "--", path],
+        ["log", f"-{limit}", "--follow", ref, f"--pretty=tformat:{LOG_FORMAT}", "--no-color", "--", path],
         check=False,
     )
     commits: list[RawCommit] = []

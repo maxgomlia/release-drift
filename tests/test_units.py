@@ -163,5 +163,35 @@ class TestDiffParser(unittest.TestCase):
         self.assertEqual([f.path for f in files], ["a.py", "b.py"])
 
 
+class TestGitOpsFollowsRenames(unittest.TestCase):
+    """A file renamed on the target branch (as part of a refactor while
+    also being fixed) is still found by file_history's --follow, even
+    though the source-side commit's path no longer exists at that name."""
+
+    def test_file_history_follows_rename(self):
+        import os
+        repo = RepoBuilder()
+        repo.commit("Initial", {"a.txt": "1\n"})
+        base = repo.commit("base", {"src/position.py": "def f():\n    return 0\n"})
+        repo.branch("release/26.06", base)
+        repo.checkout("release/26.06")
+
+        os.makedirs(repo.path + "/src/risk", exist_ok=True)
+        os.rename(repo.path + "/src/position.py", repo.path + "/src/risk/position.py")
+        with open(repo.path + "/src/risk/position.py", "w") as f:
+            f.write("def f():\n    return 1  # fixed\n")
+        repo._run(["add", "-A"])
+        repo._run(["commit", "-q", "-m", "Move and fix position validation"])
+        rename_commit = repo.rev_parse("HEAD")
+        repo.checkout("main")
+
+        try:
+            hist = git_ops.file_history(repo.path, "release/26.06", "src/position.py", limit=5)
+            shas = [h.sha for h in hist]
+            self.assertIn(rename_commit, shas)
+        finally:
+            repo.cleanup()
+
+
 if __name__ == "__main__":
     unittest.main()

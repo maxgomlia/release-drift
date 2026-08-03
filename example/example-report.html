@@ -166,12 +166,12 @@ td.diff-truncated-note{padding:6px 10px;color:var(--muted);font-style:italic;bac
   </header>
 
   <section class="meta-grid">
-    <div><span class="meta-k">Generated</span><span class="meta-v">2026-08-03T02:21:54+00:00</span></div>
+    <div><span class="meta-k">Generated</span><span class="meta-v">2026-08-03T02:45:45+00:00</span></div>
     <div><span class="meta-k">Repository</span><span class="meta-v">https://git.example.com/risk-platform/locate-service.git</span></div>
-    <div><span class="meta-k">Source branch</span><span class="meta-v">release/26.05 @ e1567f4440</span></div>
-    <div><span class="meta-k">Target branch</span><span class="meta-v">release/26.06 @ b9687e95ca</span></div>
-    <div><span class="meta-k">Common ancestor</span><span class="meta-v">673e79c058</span></div>
-    <div><span class="meta-k">Target HEAD</span><span class="meta-v">b9687e95ca</span></div>
+    <div><span class="meta-k">Source branch</span><span class="meta-v">release/26.05 @ cc8d4a0ee7</span></div>
+    <div><span class="meta-k">Target branch</span><span class="meta-v">release/26.06 @ 1e1d333947</span></div>
+    <div><span class="meta-k">Common ancestor</span><span class="meta-v">b05c581963</span></div>
+    <div><span class="meta-k">Target HEAD</span><span class="meta-v">1e1d333947</span></div>
     <div><span class="meta-k">Comparison method</span><span class="meta-v">merge-base divergence + bidirectional git-patch-id pairing, cross-checked against git-cherry patch-equivalence</span></div>
     <div><span class="meta-k">Tool version</span><span class="meta-v">release-report v2.0.0</span></div>
   </section>
@@ -203,13 +203,13 @@ td.diff-truncated-note{padding:6px 10px;color:var(--muted);font-style:italic;bac
       </summary>
       <div class="risk-card-body">
         <div class="risk-meta">
-          <div><span class="meta-k">Present in</span><span class="meta-v">source release — 0d459821db</span></div>
+          <div><span class="meta-k">Present in</span><span class="meta-v">source release — ba72512c42</span></div>
           <div><span class="meta-k">Equivalent in target</span><span class="meta-v">NOT FOUND</span></div>
           <div><span class="meta-k">Basis</span><span class="meta-v">No equivalent patch-id found in target and &#x27;git cherry&#x27; found no corresponding change. This commit is present on the source release and appears absent from the target release -- potential regression risk.</span></div>
         </div>
         
     <div class="diff-block">
-      <div class="diff-block-label">Source diff — 0d459821db</div>
+      <div class="diff-block-label">Source diff — ba72512c42</div>
       
     <details class="diff-file">
       <summary class="diff-file-header">src/position.py <span class="badge badge-info">new file</span></summary>
@@ -221,7 +221,7 @@ td.diff-truncated-note{padding:6px 10px;color:var(--muted);font-style:italic;bac
     </div>
         
         
-        <details class="risk-cmds"><summary>Commands to verify manually</summary><pre>git show 0d459821db383e30aca9cc325b77a543e6dec2e6
+        <details class="risk-cmds"><summary>Commands to verify manually</summary><pre>git show ba72512c4240e7955106c20486925885d3efce06
 git log release/26.06 -- src/position.py   # see target-branch history for this file</pre></details>
         <div class="risk-actions">
           Action required:
@@ -240,13 +240,13 @@ git log release/26.06 -- src/position.py   # see target-branch history for this 
       </summary>
       <div class="risk-card-body">
         <div class="risk-meta">
-          <div><span class="meta-k">Present in</span><span class="meta-v">source release — e1567f4440</span></div>
+          <div><span class="meta-k">Present in</span><span class="meta-v">source release — cc8d4a0ee7</span></div>
           <div><span class="meta-k">Equivalent in target</span><span class="meta-v">NOT FOUND</span></div>
           <div><span class="meta-k">Basis</span><span class="meta-v">No equivalent patch-id found in target and &#x27;git cherry&#x27; found no corresponding change. This commit is present on the source release and appears absent from the target release -- potential regression risk.</span></div>
         </div>
         
     <div class="diff-block">
-      <div class="diff-block-label">Source diff — e1567f4440</div>
+      <div class="diff-block-label">Source diff — cc8d4a0ee7</div>
       
     <details class="diff-file">
       <summary class="diff-file-header">src/locate.py </summary>
@@ -260,10 +260,10 @@ git log release/26.06 -- src/position.py   # see target-branch history for this 
       <div class="risk-hint">
         <strong>Possibly related target commit(s)</strong> — same file(s) touched, but the diff didn't
         match automatically. Worth checking manually in case this was ported by hand rather than cherry-picked:
-        <ul><li><code>b9515a57c7</code> RISK-1832 Fix locate validation <span class="muted">(1 file(s), touches a file this change also touched)</span></li></ul>
+        <ul><li><code>5da199079d</code> RISK-1832 Fix locate validation <span class="muted">(1 file(s), touches a file this change also touched)</span></li></ul>
       </div>
         
-        <details class="risk-cmds"><summary>Commands to verify manually</summary><pre>git show e1567f4440021dd7b75dd499bfec15341ee7a0b3
+        <details class="risk-cmds"><summary>Commands to verify manually</summary><pre>git show cc8d4a0ee72a01e5bfed2fe2033d5dd9156da3cc
 git log release/26.06 -- src/locate.py   # see target-branch history for this file</pre></details>
         <div class="risk-actions">
           Action required:
@@ -303,11 +303,11 @@ git log release/26.06 -- src/locate.py   # see target-branch history for this fi
           <div class="commit-blocks">
             
     <div class="commit-block">
-      <div class="commit-block-title">Source (0d459821db)</div>
+      <div class="commit-block-title">Source (ba72512c42)</div>
       <table class="commit-meta">
-        <tr><th>SHA</th><td><code>0d459821db383e30aca9cc325b77a543e6dec2e6</code></td></tr>
+        <tr><th>SHA</th><td><code>ba72512c4240e7955106c20486925885d3efce06</code></td></tr>
         <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
-        <tr><th>Author date</th><td>2026-08-03T02:21:54+00:00</td></tr>
+        <tr><th>Author date</th><td>2026-08-03T02:45:45+00:00</td></tr>
         <tr><th>Subject</th><td>RISK-1942 Fix position validation</td></tr>
         <tr><th>PR</th><td>—</td></tr>
         <tr><th>Files changed</th><td>1</td></tr>
@@ -336,11 +336,11 @@ git log release/26.06 -- src/locate.py   # see target-branch history for this fi
           <div class="commit-blocks">
             
     <div class="commit-block">
-      <div class="commit-block-title">Source (e1567f4440)</div>
+      <div class="commit-block-title">Source (cc8d4a0ee7)</div>
       <table class="commit-meta">
-        <tr><th>SHA</th><td><code>e1567f4440021dd7b75dd499bfec15341ee7a0b3</code></td></tr>
+        <tr><th>SHA</th><td><code>cc8d4a0ee72a01e5bfed2fe2033d5dd9156da3cc</code></td></tr>
         <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
-        <tr><th>Author date</th><td>2026-08-03T02:21:54+00:00</td></tr>
+        <tr><th>Author date</th><td>2026-08-03T02:45:45+00:00</td></tr>
         <tr><th>Subject</th><td>RISK-1955 Minor logging cleanup in locate service</td></tr>
         <tr><th>PR</th><td>—</td></tr>
         <tr><th>Files changed</th><td>1</td></tr>
@@ -364,17 +364,17 @@ git log release/26.06 -- src/locate.py   # see target-branch history for this fi
     <tr class="change-detail-row" id="row-2">
       <td colspan="4">
         <div class="change-detail">
-          <p class="reason"><strong>Classification basis:</strong> Commit message identifies this as a revert of ab755cda1b. Could not confirm the reverted commit&#x27;s classification in this comparison; flagged for manual confirmation.
+          <p class="reason"><strong>Classification basis:</strong> Commit message identifies this as a revert of fb9c04cceb. Could not confirm the reverted commit&#x27;s classification in this comparison; flagged for manual confirmation.
              <span class="confidence">(confidence: MEDIUM)</span></p>
           <div class="commit-blocks">
             <div class="commit-block empty"><div class="commit-block-title">Source (—)</div><div class="commit-empty">— none —</div></div>
             
     <div class="commit-block">
-      <div class="commit-block-title">Target (b9687e95ca)</div>
+      <div class="commit-block-title">Target (1e1d333947)</div>
       <table class="commit-meta">
-        <tr><th>SHA</th><td><code>b9687e95cab998a3bbba192e9cb2d619126e72a4</code></td></tr>
+        <tr><th>SHA</th><td><code>1e1d333947c41b4578ad0819786884901cadc1ba</code></td></tr>
         <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
-        <tr><th>Author date</th><td>2026-08-03T02:21:54+00:00</td></tr>
+        <tr><th>Author date</th><td>2026-08-03T02:45:45+00:00</td></tr>
         <tr><th>Subject</th><td>Revert &quot;RISK-1990 Experimental order-routing change&quot;</td></tr>
         <tr><th>PR</th><td>—</td></tr>
         <tr><th>Files changed</th><td>1</td></tr>
@@ -403,11 +403,11 @@ git log release/26.06 -- src/locate.py   # see target-branch history for this fi
             <div class="commit-block empty"><div class="commit-block-title">Source (—)</div><div class="commit-empty">— none —</div></div>
             
     <div class="commit-block">
-      <div class="commit-block-title">Target (da5de8932e)</div>
+      <div class="commit-block-title">Target (6e54b561e6)</div>
       <table class="commit-meta">
-        <tr><th>SHA</th><td><code>da5de8932e6bda137364f5c98c7a78d20cf54024</code></td></tr>
+        <tr><th>SHA</th><td><code>6e54b561e62a710f8198c99c7685abf7cdb40a53</code></td></tr>
         <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
-        <tr><th>Author date</th><td>2026-08-03T02:21:54+00:00</td></tr>
+        <tr><th>Author date</th><td>2026-08-03T02:45:45+00:00</td></tr>
         <tr><th>Subject</th><td>RISK-1903 Add new locate query handling</td></tr>
         <tr><th>PR</th><td>—</td></tr>
         <tr><th>Files changed</th><td>1</td></tr>
@@ -436,11 +436,11 @@ git log release/26.06 -- src/locate.py   # see target-branch history for this fi
             <div class="commit-block empty"><div class="commit-block-title">Source (—)</div><div class="commit-empty">— none —</div></div>
             
     <div class="commit-block">
-      <div class="commit-block-title">Target (80e464c859)</div>
+      <div class="commit-block-title">Target (56c4c25cea)</div>
       <table class="commit-meta">
-        <tr><th>SHA</th><td><code>80e464c8595013c8d7d3e6efcb158fa6f8a0bc9c</code></td></tr>
+        <tr><th>SHA</th><td><code>56c4c25cea3dda04aff818f4e22dffe80ecdb402</code></td></tr>
         <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
-        <tr><th>Author date</th><td>2026-08-03T02:21:54+00:00</td></tr>
+        <tr><th>Author date</th><td>2026-08-03T02:45:45+00:00</td></tr>
         <tr><th>Subject</th><td>RISK-1981 Add throttling to market data feed</td></tr>
         <tr><th>PR</th><td>—</td></tr>
         <tr><th>Files changed</th><td>1</td></tr>
@@ -469,11 +469,11 @@ git log release/26.06 -- src/locate.py   # see target-branch history for this fi
             <div class="commit-block empty"><div class="commit-block-title">Source (—)</div><div class="commit-empty">— none —</div></div>
             
     <div class="commit-block">
-      <div class="commit-block-title">Target (ab755cda1b)</div>
+      <div class="commit-block-title">Target (fb9c04cceb)</div>
       <table class="commit-meta">
-        <tr><th>SHA</th><td><code>ab755cda1b541d25d82c8c812b80afa7ad55baf0</code></td></tr>
+        <tr><th>SHA</th><td><code>fb9c04ccebf52f31402dba811a795142c3e66747</code></td></tr>
         <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
-        <tr><th>Author date</th><td>2026-08-03T02:21:54+00:00</td></tr>
+        <tr><th>Author date</th><td>2026-08-03T02:45:45+00:00</td></tr>
         <tr><th>Subject</th><td>RISK-1990 Experimental order-routing change</td></tr>
         <tr><th>PR</th><td>—</td></tr>
         <tr><th>Files changed</th><td>1</td></tr>
@@ -496,16 +496,16 @@ git log release/26.06 -- src/locate.py   # see target-branch history for this fi
     <tr class="change-detail-row" id="row-6">
       <td colspan="4">
         <div class="change-detail">
-          <p class="reason"><strong>Classification basis:</strong> Patch-id 9ef8534e2c01 matches target commit b9515a57c7 (git cherry corroborates).
+          <p class="reason"><strong>Classification basis:</strong> Patch-id 9ef8534e2c01 matches target commit 5da199079d (git cherry corroborates).
              <span class="confidence">(confidence: HIGH)</span></p>
           <div class="commit-blocks">
             
     <div class="commit-block">
-      <div class="commit-block-title">Source (e802dd761e)</div>
+      <div class="commit-block-title">Source (58f5e771fb)</div>
       <table class="commit-meta">
-        <tr><th>SHA</th><td><code>e802dd761e059fd57bbd1889de2af0ebc045988b</code></td></tr>
+        <tr><th>SHA</th><td><code>58f5e771fb0c66ab5790aa28d636e6f9f181a3f7</code></td></tr>
         <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
-        <tr><th>Author date</th><td>2026-08-03T02:21:54+00:00</td></tr>
+        <tr><th>Author date</th><td>2026-08-03T02:45:45+00:00</td></tr>
         <tr><th>Subject</th><td>RISK-1832 Fix locate validation</td></tr>
         <tr><th>PR</th><td>—</td></tr>
         <tr><th>Files changed</th><td>1</td></tr>
@@ -516,11 +516,11 @@ git log release/26.06 -- src/locate.py   # see target-branch history for this fi
     </div>
             
     <div class="commit-block">
-      <div class="commit-block-title">Target (b9515a57c7)</div>
+      <div class="commit-block-title">Target (5da199079d)</div>
       <table class="commit-meta">
-        <tr><th>SHA</th><td><code>b9515a57c75271678bc42b2f97b8757714144165</code></td></tr>
+        <tr><th>SHA</th><td><code>5da199079d093bd5c8cae10a66a49aa82eaabeec</code></td></tr>
         <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
-        <tr><th>Author date</th><td>2026-08-03T02:21:54+00:00</td></tr>
+        <tr><th>Author date</th><td>2026-08-03T02:45:45+00:00</td></tr>
         <tr><th>Subject</th><td>RISK-1832 Fix locate validation</td></tr>
         <tr><th>PR</th><td>—</td></tr>
         <tr><th>Files changed</th><td>1</td></tr>
@@ -543,16 +543,16 @@ git log release/26.06 -- src/locate.py   # see target-branch history for this fi
     <tr class="change-detail-row" id="row-7">
       <td colspan="4">
         <div class="change-detail">
-          <p class="reason"><strong>Classification basis:</strong> Patch-id 241390a43d2d matches target commit f9dbf732f0 (git cherry corroborates).
+          <p class="reason"><strong>Classification basis:</strong> Patch-id 241390a43d2d matches target commit fc2ad84738 (git cherry corroborates).
              <span class="confidence">(confidence: HIGH)</span></p>
           <div class="commit-blocks">
             
     <div class="commit-block">
-      <div class="commit-block-title">Source (d006bc6b86)</div>
+      <div class="commit-block-title">Source (6ee9285cfd)</div>
       <table class="commit-meta">
-        <tr><th>SHA</th><td><code>d006bc6b867286b74e571232cfbf5486345e1728</code></td></tr>
+        <tr><th>SHA</th><td><code>6ee9285cfd7e69858ea95385200dadf92d061b9d</code></td></tr>
         <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
-        <tr><th>Author date</th><td>2026-08-03T02:21:54+00:00</td></tr>
+        <tr><th>Author date</th><td>2026-08-03T02:45:45+00:00</td></tr>
         <tr><th>Subject</th><td>RISK-1871 Position cache correction</td></tr>
         <tr><th>PR</th><td>—</td></tr>
         <tr><th>Files changed</th><td>1</td></tr>
@@ -563,11 +563,11 @@ git log release/26.06 -- src/locate.py   # see target-branch history for this fi
     </div>
             
     <div class="commit-block">
-      <div class="commit-block-title">Target (f9dbf732f0)</div>
+      <div class="commit-block-title">Target (fc2ad84738)</div>
       <table class="commit-meta">
-        <tr><th>SHA</th><td><code>f9dbf732f0aee80c59c8b8da302e54b837d56134</code></td></tr>
+        <tr><th>SHA</th><td><code>fc2ad847380d047d04c156d979300218cd76b530</code></td></tr>
         <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
-        <tr><th>Author date</th><td>2026-08-03T02:21:54+00:00</td></tr>
+        <tr><th>Author date</th><td>2026-08-03T02:45:45+00:00</td></tr>
         <tr><th>Subject</th><td>RISK-1871 Position cache correction</td></tr>
         <tr><th>PR</th><td>—</td></tr>
         <tr><th>Files changed</th><td>1</td></tr>
@@ -582,7 +582,7 @@ git log release/26.06 -- src/locate.py   # see target-branch history for this fi
     </tr>
 
     <tr class="change-row" data-target="row-8" onclick="toggleRow('row-8')">
-      <td class="mono">COMMIT-09c70ac5ca</td>
+      <td class="mono">COMMIT-0721595dbb</td>
       <td>Release 26.06 version bump</td>
       <td>Chore</td>
       <td><span class="badge badge-neutral">Target-Only</span></td>
@@ -596,11 +596,11 @@ git log release/26.06 -- src/locate.py   # see target-branch history for this fi
             <div class="commit-block empty"><div class="commit-block-title">Source (—)</div><div class="commit-empty">— none —</div></div>
             
     <div class="commit-block">
-      <div class="commit-block-title">Target (09c70ac5ca)</div>
+      <div class="commit-block-title">Target (0721595dbb)</div>
       <table class="commit-meta">
-        <tr><th>SHA</th><td><code>09c70ac5cab5e5f87d011de11c147d4ce3078a1b</code></td></tr>
+        <tr><th>SHA</th><td><code>0721595dbb6e99762fe2e9c117b5ed75200165ff</code></td></tr>
         <tr><th>Author</th><td>Platform Engineering &lt;platform-eng@example.com&gt;</td></tr>
-        <tr><th>Author date</th><td>2026-08-03T02:21:54+00:00</td></tr>
+        <tr><th>Author date</th><td>2026-08-03T02:45:45+00:00</td></tr>
         <tr><th>Subject</th><td>Release 26.06 version bump</td></tr>
         <tr><th>PR</th><td>—</td></tr>
         <tr><th>Files changed</th><td>1</td></tr>
@@ -627,7 +627,7 @@ git log release/26.06 -- src/locate.py   # see target-branch history for this fi
       <circle cx="230" cy="110" r="6" fill="#1f2937"/>
       <text x="20" y="100" font-size="12" fill="#334155">main</text>
       <text x="205" y="135" font-size="11" fill="#64748b">common ancestor</text>
-      <text x="205" y="148" font-size="10" fill="#94a3b8" font-family="monospace">673e79c058</text>
+      <text x="205" y="148" font-size="10" fill="#94a3b8" font-family="monospace">b05c581963</text>
 
       <line x1="230" y1="110" x2="620" y2="55" stroke="#1a7f37" stroke-width="2"/>
       <circle cx="620" cy="55" r="6" fill="#1a7f37"/>
@@ -658,13 +658,13 @@ git log release/26.06 -- src/locate.py   # see target-branch history for this fi
     <h3>Methodology</h3>
     <dl class="audit-dl">
       <dt>Repository</dt><dd>https://git.example.com/risk-platform/locate-service.git</dd>
-      <dt>Source</dt><dd>release/26.05 @ e1567f4440021dd7b75dd499bfec15341ee7a0b3</dd>
-      <dt>Target</dt><dd>release/26.06 @ b9687e95cab998a3bbba192e9cb2d619126e72a4</dd>
-      <dt>Common ancestor</dt><dd>673e79c0584de8e65e5a237bc10a69371b2c144f</dd>
-      <dt>Merge-base candidates</dt><dd>673e79c058</dd>
+      <dt>Source</dt><dd>release/26.05 @ cc8d4a0ee72a01e5bfed2fe2033d5dd9156da3cc</dd>
+      <dt>Target</dt><dd>release/26.06 @ 1e1d333947c41b4578ad0819786884901cadc1ba</dd>
+      <dt>Common ancestor</dt><dd>b05c5819639da6e55878ae52228bdde493795261</dd>
+      <dt>Merge-base candidates</dt><dd>b05c581963</dd>
       <dt>Algorithm</dt><dd>merge-base divergence + bidirectional git-patch-id pairing, cross-checked against git-cherry patch-equivalence</dd>
       <dt>Tool version</dt><dd>2.0.0</dd>
-      <dt>Generated</dt><dd>2026-08-03T02:21:54+00:00</dd>
+      <dt>Generated</dt><dd>2026-08-03T02:45:45+00:00</dd>
     </dl>
     <p class="disclaimer">
       This report is generated from read-only Git analysis (merge-base, log, diff, patch-id, cherry).

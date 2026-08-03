@@ -163,12 +163,18 @@ leaving the report:
   changes that were manually re-ported (typed by hand, not `git
   cherry-pick`ed) with a slightly different diff than the original.
 - **"Recent history of this file on target"** — searches the file's *full*
-  history on the target branch, independent of the computed divergence
-  point. This exists specifically for the case the hint above can't cover:
-  if the target branch was rebased or recreated from a later point on its
-  upstream (e.g. `main`), an equivalent fix can end up part of the
-  *shared* ancestry both branches inherit rather than a target-unique
-  commit — invisible to a divergence-limited search, but still found here.
+  history on the target branch (following simple renames), independent of
+  the computed divergence point. This exists specifically for the case the
+  hint above can't cover: if the target branch was rebased or recreated
+  from a later point on its upstream (e.g. `main`), an equivalent fix can
+  end up part of the *shared* ancestry both branches inherit rather than a
+  target-unique commit — invisible to a divergence-limited search, but
+  still found here. Note: this hint is display-only and follows renames;
+  the underlying `MISSING`/`CARRIED FORWARD` classification itself is
+  still exact-path-based and will not detect a renamed file as equivalent
+  — patch-id inherently differs for a rename vs. a same-path edit, so a
+  renamed-and-fixed file will still show as `MISSING` even once this hint
+  correctly points you at the right commit.
 - **Copy-pasteable `git show`/`git log` commands** for a full manual check
   against your real repo
 
@@ -284,6 +290,14 @@ plumbing.
 - Squash-merged commits generally won't patch-id-match any single source
   commit; the Jira-ID correlation partially mitigates this but the tool
   cannot fully reconstruct history that Git itself has discarded.
+- **Renamed files**: classification (`MISSING`/`CARRIED FORWARD`/etc.) is
+  exact-path-based. If a fix was also renamed/moved as part of being
+  applied to the target branch, it will not patch-id-match and will show
+  as `MISSING` even though it's functionally present — a rename inherently
+  produces a different diff than a same-path edit. The "Recent history of
+  this file on target" hint uses `--follow` and will usually still surface
+  the right commit for a human to confirm, but it does not change the
+  classification itself.
 - Multiple merge-base candidates (criss-cross merges) are recorded in
   report metadata even though only the first is used for the comparison.
 
